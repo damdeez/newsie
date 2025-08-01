@@ -1,5 +1,5 @@
 'use client';
-import Articles from "@/components/articles";
+import Articles from "@/components/ArticlesNews";
 import useGetEverythingByQuery from "@/hooks/useGetEverythingByQuery";
 import Image from "next/image";
 
