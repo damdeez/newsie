@@ -1,12 +1,20 @@
 'use client';
-import Articles from "@/components/ArticlesNews";
+
+import Articles from "@/components/Articles/Articles";
 import useGetEverythingByQuery from "@/hooks/useGetEverythingByQuery";
 import Image from "next/image";
+import { useState } from "react";
+import { useDebounce } from "@/hooks/useDebounce";
+import Search from "@/components/Search/Search";
 
 const tempSearchTerm = "artificial intelligence";
+
 export default function Home() {
-  const { data } = useGetEverythingByQuery(tempSearchTerm);
-  console.info('Data fetched:', data);
+  const [searchTerm, setSearchTerm] = useState(tempSearchTerm);
+  const debouncedSearchTerm = useDebounce(searchTerm);
+  const { data, loading } = useGetEverythingByQuery(debouncedSearchTerm);
+  
+  console.info('>>> Data fetched:', data);
 
   return (
     <main className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
@@ -19,7 +27,12 @@ export default function Home() {
           height={38}
           priority
         />
-        <Articles title={tempSearchTerm} articles={data?.articles} />
+        <Search
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          searchLoading={loading}
+        />
+        <Articles title={searchTerm} articles={data?.articles} />
       </section>
       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
         <a
