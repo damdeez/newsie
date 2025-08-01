@@ -1,10 +1,10 @@
-# Newsie (just another News app)
+# Newsie 📰 (just another News app)
 
 Uses the News API (https://newsapi.org/) to bring you the latest News from around the world
 
-## Getting Started
+## Getting Started 🚀
 
-First, create a `.env` file and add in your News API key
+First, create a `.env` file at the root of the project and add in your News API key
 ```
 NEXT_PUBLIC_NEWS_API_KEY=<API_KEY>
 ```
@@ -28,4 +28,4 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-Created 
+Created by [Damir](http://www.damir.fun)
