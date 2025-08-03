@@ -1,31 +1,29 @@
 "use client";
 
 import Articles from "@/components/Articles/Articles";
-import useGetEverythingByQuery from "@/hooks/useGetEverythingByQuery";
 import Image from "next/image";
 import { useState } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
+import useGetTopHeadlines from "@/hooks/useGetTopHeadlines";
 import Header from "@/components/Header/Header";
 
-const tempSearchTerm = "artificial intelligence";
-
 export default function Home() {
-  const [searchTerm, setSearchTerm] = useState(tempSearchTerm);
-  const debouncedSearchTerm = useDebounce(searchTerm);
-  const { data, loading } = useGetEverythingByQuery(debouncedSearchTerm);
+  const [filterTerm, setFilterTerm] = useState("Top Headlines");
+  const debouncedSearchTerm = useDebounce(filterTerm);
+  const { data, loading } = useGetTopHeadlines("us");
 
   console.info(">>> Data fetched:", data);
 
   return (
     <main className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <Header
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
+        searchTerm={filterTerm}
+        setSearchTerm={setFilterTerm}
         loading={loading}
       />
       <section className="w-full flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
         <Articles
-          title={searchTerm}
+          title={filterTerm}
           articles={data?.articles}
           loading={loading}
         />

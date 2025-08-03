@@ -5,16 +5,13 @@ import { API_URL } from "@/utils/constants";
 import { uniqueArticles } from "@/utils/helpers";
 import { useState, useEffect } from "react";
 
-/**
- * Custom hook to fetch top headlines from the News API.
- * @param country - The country code for which to fetch headlines (e.g., 'us', 'gb').
- */
 export const useGetTopHeadlines = (country: string) => {
   const [data, setData] = useState<INewsApiResponse | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    setLoading(true);
     const fetchData = async () => {
       try {
         const response = await fetch(

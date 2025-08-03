@@ -13,3 +13,10 @@ export const uniqueArticles = (articles: INewsApiArticle[]) => {
 
   return uniqueArticles;
 };
+
+// Function to get a month ago from today's date
+export const oneMonthAgo = () => {
+  const date = new Date();
+  date.setMonth(date.getMonth() - 1);
+  return date.toISOString().split("T")[0];
+}

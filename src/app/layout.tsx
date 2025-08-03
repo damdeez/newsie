@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Newsie",
-  description: "Stay updated with the latest news articles",
+  description: "Stay up to date with the latest news articles",
 };
 
 export default function RootLayout({

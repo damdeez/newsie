@@ -2,19 +2,20 @@
 
 import { INewsApiResponse } from "@/types/types";
 import { useState, useEffect } from "react";
-import { uniqueArticles } from "@/utils/helpers";
+import { oneMonthAgo, uniqueArticles } from "@/utils/helpers";
 import { API_URL } from "@/utils/constants";
 
 export const useGetEverythingByQuery = (query: string) => {
   const [data, setData] = useState<INewsApiResponse | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    setLoading(true);
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `${API_URL}/everything?q=${query}&language=en&from=2025-07-01&sortBy=publishedAt&apiKey=${process.env.NEXT_PUBLIC_NEWS_API_KEY}`
+          `${API_URL}/everything?q=${query}&language=en&from=${oneMonthAgo}&sortBy=publishedAt&apiKey=${process.env.NEXT_PUBLIC_NEWS_API_KEY}`
         );
         if (!response.ok) {
           setError("An error occurred, please try refreshing the page.");

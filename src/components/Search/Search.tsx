@@ -10,17 +10,18 @@ interface SearchProps {
 
 const Search = ({ setSearchTerm, searchTerm, searchLoading }: SearchProps) => {
   return (
-    <div className="grid w-full gap-2">
+    <div className="flex flex-row w-full gap-2 justify-end items-center">
       <Textarea
-        className="w-full max-w-[600px] h-[100px] sm:h-[150px] resize-none"
+        className="w-[300px] min-h-[35px] max-w-[600px] resize-none"
         placeholder="Search for news articles..."
         defaultValue={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
+        id="search-input"
       />
       <Button
-        className="w-full max-w-[600px] hover:cursor-pointer"
+        className="flex align-middle justify-center w-min h-[35px] hover:cursor-pointer"
         variant="outline"
-        onClick={() => console.info("clicking")}
+        onClick={() => setSearchTerm(searchTerm)}
       >
         {searchLoading ? <Loader2Icon /> : null}
         Search
