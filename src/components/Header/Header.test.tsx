@@ -39,19 +39,13 @@ jest.mock("next/link", () => ({
 // Mock Search component
 jest.mock("../Search/Search", () => {
   return function MockSearch({
-    searchTerm,
-    setSearchTerm,
     searchLoading,
   }: {
-    searchTerm: string;
-    setSearchTerm: (term: string) => void;
     searchLoading: boolean;
   }) {
     return (
       <div data-testid="search-component">
         <input
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
           data-testid="search-input"
         />
         {searchLoading && <div data-testid="search-loading">Loading</div>}
@@ -60,16 +54,41 @@ jest.mock("../Search/Search", () => {
   };
 });
 
-describe("<Header />", () => {
-  const mockSetSearchTerm = jest.fn();
+// Mock SearchProvider
+const MockSearchProvider = ({ children }: { children: React.ReactNode }) => {
+  const mockContextValue = {
+    searchTerm: "",
+    setSearchTerm: jest.fn(),
+    searchLoading: false,
+    setSearchLoading: jest.fn(),
+    debouncedSearchTerm: "",
+  };
+  
+  return React.createElement(
+    React.createContext(mockContextValue).Provider,
+    { value: mockContextValue },
+    children
+  );
+};
 
+// Wrapper component for tests
+const TestWrapper = ({ children }: { children: React.ReactNode }) => (
+  <MockSearchProvider>
+    {children}
+  </MockSearchProvider>
+);
+
+describe("<Header />", () => {
   beforeEach(() => {
-    mockSetSearchTerm.mockClear();
     mockUsePathname.mockReturnValue("/");
   });
 
   it("renders the logo correctly", () => {
-    render(<Header searchTerm="" setSearchTerm={mockSetSearchTerm} />);
+    render(
+      <TestWrapper>
+        <Header />
+      </TestWrapper>
+    );
 
     const logo = screen.getByAltText("Newsie logo");
     expect(logo).toBeInTheDocument();
@@ -77,7 +96,11 @@ describe("<Header />", () => {
   });
 
   it("renders navigation links correctly", () => {
-    render(<Header searchTerm="" setSearchTerm={mockSetSearchTerm} />);
+    render(
+      <TestWrapper>
+        <Header />
+      </TestWrapper>
+    );
 
     const homeLink = screen.getByRole("link", { name: "Home" });
     const headlinesLink = screen.getByRole("link", { name: "Top Headlines" });
@@ -89,38 +112,12 @@ describe("<Header />", () => {
     expect(headlinesLink).toHaveAttribute("href", "/top-headlines");
   });
 
-  it("renders Search component with correct props", () => {
-    render(
-      <Header
-        searchTerm="test search"
-        setSearchTerm={mockSetSearchTerm}
-        loading={true}
-      />
-    );
-
-    const searchComponent = screen.getByTestId("search-component");
-    const searchInput = screen.getByTestId("search-input");
-    const loadingIndicator = screen.getByTestId("search-loading");
-
-    expect(searchComponent).toBeInTheDocument();
-    expect(searchInput).toHaveValue("test search");
-    expect(loadingIndicator).toBeInTheDocument();
-  });
-
-  it("passes loading prop to Search component correctly when false", () => {
-    render(
-      <Header
-        searchTerm="test"
-        setSearchTerm={mockSetSearchTerm}
-        loading={false}
-      />
-    );
-
-    expect(screen.queryByTestId("search-loading")).not.toBeInTheDocument();
-  });
-
   it("uses default loading value when not provided", () => {
-    render(<Header searchTerm="test" setSearchTerm={mockSetSearchTerm} />);
+    render(
+      <TestWrapper>
+        <Header />
+      </TestWrapper>
+    );
 
     expect(screen.queryByTestId("search-loading")).not.toBeInTheDocument();
   });

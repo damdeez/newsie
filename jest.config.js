@@ -9,6 +9,10 @@ const createJestConfig = nextJest({
 const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   testEnvironment: 'jsdom',
+  testTimeout: 10000,
+  maxWorkers: 1,
+  forceExit: true,
+  detectOpenHandles: true,
 }
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

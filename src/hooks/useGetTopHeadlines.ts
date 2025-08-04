@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearch } from "@/contexts/SearchContext";
 import { INewsApiResponse } from "@/types/types";
 import { API_URL } from "@/utils/constants";
 import { uniqueArticles } from "@/utils/helpers";
@@ -9,9 +10,11 @@ export const useGetTopHeadlines = (country: string, query?: string) => {
   const [data, setData] = useState<INewsApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { setSearchLoading } = useSearch();
 
   useEffect(() => {
     setLoading(true);
+    setSearchLoading(true);
     const fetchData = async () => {
       try {
         const response = await fetch(
@@ -35,11 +38,12 @@ export const useGetTopHeadlines = (country: string, query?: string) => {
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
         setLoading(false);
+        setSearchLoading(false);
       }
     };
 
     fetchData();
-  }, [country, query]);
+  }, [country, query, setSearchLoading]);
 
   return { data, loading, error };
 };

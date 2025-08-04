@@ -5,23 +5,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 
-interface HeaderProps {
-  searchTerm: string;
-  setSearchTerm: (term: string) => void;
-  loading?: boolean;
-}
-
 const navigation = [
   { name: "Home", href: "/" },
   { name: "Top Headlines", href: "/top-headlines" },
   { name: "AI Summary", href: "/ai-summary" },
 ];
 
-const Header = ({
-  searchTerm,
-  setSearchTerm,
-  loading = false,
-}: HeaderProps) => {
+const Header = () => {
   const pathname = usePathname();
   const linkStyles =
     "w-[100px] sm:w-[125px] h-[35px] flex justify-center items-center text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors";
@@ -53,11 +43,7 @@ const Header = ({
         </nav>
       </div>
       <div className="w-full sm:w-auto sm:ml-4">
-        <Search
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          searchLoading={loading}
-        />
+        <Search />
       </div>
     </header>
   );

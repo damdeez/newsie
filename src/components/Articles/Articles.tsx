@@ -12,16 +12,16 @@ interface ArticlesProps {
 const Articles = ({ title, articles, loading }: ArticlesProps) => {
   const pathname = usePathname();
   const isTopHeadlines = pathname === "/top-headlines";
-  
+
   if (loading) {
     return (
       <p>
-        <Loader2 className="animate-spin"/>
+        <Loader2 className="animate-spin" />
       </p>
     );
   } else if (!articles || (articles.length === 0 && !loading)) {
     return <p>No articles found.</p>;
-  } 
+  }
 
   return (
     <section className="w-full max-w-6xl mx-auto">
@@ -43,12 +43,12 @@ const Articles = ({ title, articles, loading }: ArticlesProps) => {
                 {article.title}
               </a>
               {article.urlToImage && (
-                <div className="absolute right-[140px] top-[-40px] invisible group-hover:visible bg-white border border-gray-300 rounded-lg shadow-lg p-1 z-10 w-64">
+                <div className="absolute right-[140px] top-[40px] invisible group-hover:visible bg-white border border-gray-300 rounded-lg shadow-lg p-1 z-10 w-64">
                   <Image
                     src={article.urlToImage}
                     alt={article.title}
                     width={250}
-                    height={150}
+                    height={100}
                     className="rounded-md object-cover"
                   />
                   <p className="text-xs text-gray-600 mt-1">

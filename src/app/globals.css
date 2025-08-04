@@ -1,8 +1,24 @@
 @import "tailwindcss";
 
 :root {
+  /* Base colors */
   --background: #ffffff;
   --foreground: #171717;
+  
+  /* Gray scale */
+  --gray-100: #f3f4f6;
+  --gray-300: #d1d5db;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-800: #1f2937;
+  
+  /* Accent colors */
+  --blue-500: #3b82f6;
+  
+  /* Semantic colors */
+  --white: #ffffff;
+  --black: #0a0a0a;
+  --light-gray: #ededed;
 }
 
 @theme inline {
@@ -14,8 +30,24 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
+    /* Base colors for dark mode */
     --background: #0a0a0a;
     --foreground: #ededed;
+    
+    /* Gray scale for dark mode */
+    --gray-100: #374151;
+    --gray-300: #6b7280;
+    --gray-500: #9ca3af;
+    --gray-600: #d1d5db;
+    --gray-800: #111827;
+    
+    /* Accent colors remain the same */
+    --blue-500: #3b82f6;
+    
+    /* Semantic colors for dark mode */
+    --white: #0a0a0a;
+    --black: #ffffff;
+    --light-gray: #ededed;
   }
 }
 

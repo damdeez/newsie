@@ -2,13 +2,13 @@
 
 import useGetEverythingByQuery from "@/hooks/useGetEverythingByQuery";
 import Image from "next/image";
-import { useState } from "react";
-import { useDebounce } from "@/hooks/useDebounce";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header/Header";
 import { generateText } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { useSearch } from "@/contexts/SearchContext";
 
 const tempSearchTerm = "artificial intelligence";
 
@@ -24,7 +24,7 @@ const formatText = (text: string) => {
     if (line.trim().startsWith("•")) {
       return (
         <div key={index} className="flex items-start gap-2 mb-2">
-          <span className="text-blue-500 font-bold mt-1">•</span>
+          <span className="text-blue-500 font-bold">•</span>
           <span className="flex-1">{line.trim().substring(1).trim()}</span>
         </div>
       );
@@ -41,19 +41,24 @@ const formatText = (text: string) => {
 };
 
 function AiSummary() {
-  const [searchTerm, setSearchTerm] = useState(tempSearchTerm);
+  const { searchTerm, setSearchTerm, debouncedSearchTerm } = useSearch();
   const [text, setText] = useState("");
   const [loadingSummary, setLoadingSummary] = useState(false);
-  const debouncedSearchTerm = useDebounce(searchTerm);
   const { data, loading } = useGetEverythingByQuery(debouncedSearchTerm);
+
+  useEffect(() => {
+    if (!searchTerm) {
+      setSearchTerm(tempSearchTerm);
+    }
+  }, [searchTerm, setSearchTerm]);
 
   const handleGenerateSummary = async () => {
     setLoadingSummary(true);
     try {
       const { text: aiText } = await generateText({
         model: openai("o3-mini"),
-        prompt: `Generate a summary for the following articles, be concise and easy to understand while having a friendly tone towards the user who is reading it: ${data?.articles
-          .map((article) => article.title)
+        prompt: `Generate a summary for the following articles based on a search query ${searchTerm}, be concise and easy to understand while having a friendly-tone towards the user who is reading it: ${data?.articles
+          .map((article) => article.description)
           .join(", ")}`,
       });
       setText(aiText);
@@ -69,22 +74,18 @@ function AiSummary() {
 
   return (
     <main className="font-sans grid items-start justify-items-center min-h-screen p-2 sm:p-8 pb-20 gap-4 sm:gap-16">
-      <Header
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        loading={loading}
-      />
+      <Header />
       <div>
         <h2 className="text-lg font-semibold mb-2">
-          AI Summary 🤖 for {searchTerm}
+          AI Summary 🤖 of recent news on &quot;{searchTerm}&quot;
         </h2>
         <Button
-          className="flex align-middle justify-center w-full sm:w-[180px] h-[35px] hover:cursor-pointer"
+          className="flex align-middle justify-center w-full sm:w-[200px] h-[35px] hover:cursor-pointer"
           variant="outline"
           onClick={handleGenerateSummary}
-          disabled={loading || loadingSummary}
+          disabled={loading || loadingSummary || text.length > 0}
         >
-          Generate Summary
+          {loadingSummary ? 'Generating Summary' : 'Generate Summary'}
           {loadingSummary ? <Loader2 className="animate-spin ml-2" /> : null}
         </Button>
         {text && (
