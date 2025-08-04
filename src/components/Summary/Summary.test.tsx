@@ -152,7 +152,7 @@ describe("<Summary />", () => {
     await user.click(button);
 
     // The button should at least be clickable
-    expect(button).toBeInTheDocument();
+    expect(screen.getByTestId('ai-summary-response')).toBeInTheDocument();
   });
 
   it("renders with empty articles array", () => {

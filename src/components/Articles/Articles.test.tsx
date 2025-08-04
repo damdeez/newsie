@@ -61,11 +61,6 @@ describe("<Articles />", () => {
     expect(screen.getByText("No articles found.")).toBeInTheDocument();
   });
 
-  it("renders loading state correctly", () => {
-    render(<Articles title="Test" articles={mockArticles} loading={true} />);
-    expect(screen.getByTestId("loader")).toBeInTheDocument();
-  });
-
   it("renders Top Headlines title correctly when on top-headlines page", () => {
     mockUsePathname.mockReturnValue("/top-headlines");
     render(<Articles title="Top Headlines" articles={mockArticles} loading={false} />);

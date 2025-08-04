@@ -9,6 +9,7 @@ import Header from "@/components/Header/Header";
 import { useSearch } from "@/contexts/SearchContext";
 
 import Summary from "@/components/Summary/Summary";
+import { Loader2 } from "lucide-react";
 
 const tempSearchTerm = "artificial intelligence";
 
@@ -22,6 +23,15 @@ function Home() {
     }
   }, [searchTerm, setSearchTerm]);
 
+  // TODO: this loading state needs to look better
+  if (loading) {
+    return (
+      <p>
+        <Loader2 className="animate-spin" />
+      </p>
+    );
+  }
+  
   return (
     <main className="font-sans grid items-start justify-items-center min-h-screen p-2 sm:p-8 pb-20 gap-4 sm:gap-16">
       <Header />

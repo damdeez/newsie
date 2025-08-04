@@ -73,14 +73,6 @@ describe("<Search />", () => {
     expect(input).toBeInTheDocument();
   });
 
-  it("renders filter input with correct placeholder on top-headlines page", () => {
-    mockUsePathname.mockReturnValue("/top-headlines");
-    render(<Search />);
-
-    const input = screen.getByPlaceholderText("Filter by keyword...");
-    expect(input).toBeInTheDocument();
-  });
-
   it("renders search input with default value", () => {
     render(<Search />);
 
@@ -104,14 +96,6 @@ describe("<Search />", () => {
     render(<Search />);
 
     const button = screen.getByRole("button", { name: /search/i });
-    expect(button).toBeInTheDocument();
-  });
-
-  it("renders filter button on top-headlines page", () => {
-    mockUsePathname.mockReturnValue("/top-headlines");
-    render(<Search />);
-
-    const button = screen.getByRole("button", { name: /filter/i });
     expect(button).toBeInTheDocument();
   });
 

@@ -18,7 +18,7 @@ export const useGetTopHeadlines = (country: string, query?: string) => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `${API_URL}/top-headlines?country=${country}&?q=${query}`,
+          `${API_URL}/top-headlines?country=${country}${query ? `&q=${query}` : ""}`,
           {
             headers: {
               "X-Api-Key": process.env.NEXT_PUBLIC_NEWS_API_KEY || "",

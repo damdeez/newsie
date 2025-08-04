@@ -77,7 +77,7 @@ const Summary = ({ articles }: SummaryProps) => {
         </Button>
       )}
       {aiResponse && (
-        <div className="w-lg mt-4 p-4 bg-white dark:bg-gray-700 rounded-lg">
+        <div className="w-lg mt-4 p-4 bg-white dark:bg-gray-700 rounded-lg" data-testid="ai-summary-response">
           <p>{formatText(aiResponse)}</p>
         </div>
       )}
