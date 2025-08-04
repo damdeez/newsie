@@ -3,6 +3,7 @@
 import Search from "@/components/Search/Search";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 interface HeaderProps {
   searchTerm: string;
@@ -10,37 +11,54 @@ interface HeaderProps {
   loading?: boolean;
 }
 
+const navigation = [
+  { name: "Home", href: "/" },
+  { name: "Top Headlines", href: "/top-headlines" },
+  { name: "AI Summary", href: "/ai-summary" },
+];
+
 const Header = ({
   searchTerm,
   setSearchTerm,
   loading = false,
 }: HeaderProps) => {
+  const pathname = usePathname();
   const linkStyles =
-    "w-[120px] h-[35px] flex justify-center items-center text-sm font-semibold px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors";
+    "w-[100px] sm:w-[125px] h-[35px] flex justify-center items-center text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors";
 
   return (
-    <header className="w-full flex justify-center items-center">
-      <Image
-        className="dark:invert"
-        src="/newsie.svg"
-        alt="Newsie logo"
-        width={180}
-        height={38}
-        priority
-      />
-      <nav className="flex gap-4 ml-8">
-        <Link href="/" className={linkStyles}>
-          Home
-        </Link>
-        <Link href="/top-headlines" className={linkStyles}>
-          Top Headlines
-        </Link>
-      </nav>
-      <Search
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        searchLoading={loading}
-      />
+    <header className="w-full max-w-6xl flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0">
+      <div className="flex items-center justify-between w-full sm:w-auto">
+        <Image
+          className="dark:invert"
+          src="/newsie.svg"
+          alt="Newsie logo"
+          width={150}
+          height={32}
+          priority
+        />
+        <nav className="flex gap-2 sm:gap-4 sm:ml-8">
+          {navigation.map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              className={
+                linkStyles +
+                (pathname === item.href ? " font-extrabold" : " font-semibold")
+              }
+            >
+              {item.name}
+            </Link>
+          ))}
+        </nav>
+      </div>
+      <div className="w-full sm:w-auto sm:ml-4">
+        <Search
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          searchLoading={loading}
+        />
+      </div>
     </header>
   );
 };

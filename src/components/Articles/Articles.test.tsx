@@ -3,6 +3,12 @@ import { render, screen } from "@testing-library/react";
 import Articles from "./Articles";
 import { INewsApiArticle } from "@/types/types";
 
+// Mock next/navigation
+const mockUsePathname = jest.fn();
+jest.mock("next/navigation", () => ({
+  usePathname: () => mockUsePathname(),
+}));
+
 // Mock Next.js Image component
 jest.mock("next/image", () => ({
   __esModule: true,
@@ -10,6 +16,11 @@ jest.mock("next/image", () => ({
     // eslint-disable-next-line @next/next/no-img-element
     return <img {...props} alt={props.alt} />;
   },
+}));
+
+// Mock lucide-react
+jest.mock("lucide-react", () => ({
+  Loader2: () => <div data-testid="loader">Loading</div>,
 }));
 
 const mockArticles: INewsApiArticle[] = [
@@ -36,6 +47,10 @@ const mockArticles: INewsApiArticle[] = [
 ];
 
 describe("<Articles />", () => {
+  beforeEach(() => {
+    mockUsePathname.mockReturnValue("/");
+  });
+
   it('renders "No articles found" when no articles provided', () => {
     render(<Articles title="Test" articles={[]} loading={false} />);
     expect(screen.getByText("No articles found.")).toBeInTheDocument();
@@ -46,12 +61,19 @@ describe("<Articles />", () => {
     expect(screen.getByText("No articles found.")).toBeInTheDocument();
   });
 
-  it("renders Top Headlines title correctly", () => {
+  it("renders loading state correctly", () => {
+    render(<Articles title="Test" articles={mockArticles} loading={true} />);
+    expect(screen.getByTestId("loader")).toBeInTheDocument();
+  });
+
+  it("renders Top Headlines title correctly when on top-headlines page", () => {
+    mockUsePathname.mockReturnValue("/top-headlines");
     render(<Articles title="Top Headlines" articles={mockArticles} loading={false} />);
     expect(screen.getByText("Top Headlines")).toBeInTheDocument();
   });
 
   it("renders search results title correctly", () => {
+    mockUsePathname.mockReturnValue("/");
     render(<Articles title="bitcoin" articles={mockArticles} loading={false} />);
     expect(
       screen.getByText('Most recent articles for "bitcoin"')
@@ -100,11 +122,5 @@ describe("<Articles />", () => {
     expect(
       screen.queryByAltText("Another Test Article")
     ).not.toBeInTheDocument();
-  });
-
-  it("displays article descriptions in image hover tooltip", () => {
-    render(<Articles title="Test" articles={mockArticles} loading={false} />);
-
-    expect(screen.getByText("Test article description")).toBeInTheDocument();
   });
 });

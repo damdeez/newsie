@@ -1,6 +1,7 @@
-import { Loader2Icon } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { usePathname } from "next/navigation";
 
 interface SearchProps {
   setSearchTerm: (term: string) => void;
@@ -9,22 +10,29 @@ interface SearchProps {
 }
 
 const Search = ({ setSearchTerm, searchTerm, searchLoading }: SearchProps) => {
+  const pathname = usePathname();
+  const isTopHeadlines = pathname === "/top-headlines";
+
   return (
-    <div className="flex flex-row w-full gap-2 justify-end items-center">
+    <div className="flex flex-col sm:flex-row w-full gap-2 justify-center sm:justify-end items-stretch sm:items-center">
       <Textarea
-        className="w-[300px] min-h-[35px] max-w-[600px] resize-none"
-        placeholder="Search for news articles..."
+        className="w-full sm:w-[300px] min-h-[35px] sm:max-w-[600px] resize-none"
+        placeholder={
+          isTopHeadlines
+            ? "Filter by keyword..."
+            : "Search for articles by keyword..."
+        }
         defaultValue={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         id="search-input"
       />
       <Button
-        className="flex align-middle justify-center w-min h-[35px] hover:cursor-pointer"
+        className="flex align-middle justify-center w-full sm:w-[125px] h-[35px] hover:cursor-pointer"
         variant="outline"
         onClick={() => setSearchTerm(searchTerm)}
       >
-        {searchLoading ? <Loader2Icon /> : null}
-        Search
+        {searchLoading ? <Loader2 className="animate-spin mr-2"/> : null}
+        {isTopHeadlines ? "Filter" : "Search"}
       </Button>
     </div>
   );

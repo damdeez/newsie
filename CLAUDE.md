@@ -18,6 +18,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 * Use `pnpm` over any other package manager.
 * Use TailwindCSS for styling and make sure the version you are referencing is compatible with the version in package.json.
 * Don't write tests for any files located in `/src/components/ui`
+* Don't write tests to check for styling in components
 * Always use semicolons after statements
 
 ## Project Overview

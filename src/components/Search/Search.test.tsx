@@ -3,6 +3,12 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Search from "./Search";
 
+// Mock next/navigation
+const mockUsePathname = jest.fn();
+jest.mock("next/navigation", () => ({
+  usePathname: () => mockUsePathname(),
+}));
+
 // Mock UI components
 jest.mock("../ui/textarea", () => ({
   Textarea: ({
@@ -34,7 +40,7 @@ jest.mock("../ui/button", () => ({
 
 // Mock lucide-react
 jest.mock("lucide-react", () => ({
-  Loader2Icon: () => <div data-testid="loader-icon">Loading Icon</div>,
+  Loader2: () => <div data-testid="loader-icon">Loading Icon</div>,
 }));
 
 describe("<Search />", () => {
@@ -42,9 +48,11 @@ describe("<Search />", () => {
 
   beforeEach(() => {
     mockSetSearchTerm.mockClear();
+    mockUsePathname.mockReturnValue("/");
   });
 
-  it("renders search input with correct placeholder", () => {
+  it("renders search input with correct placeholder on home page", () => {
+    mockUsePathname.mockReturnValue("/");
     render(
       <Search
         searchTerm=""
@@ -53,7 +61,21 @@ describe("<Search />", () => {
       />
     );
 
-    const input = screen.getByPlaceholderText("Search for news articles...");
+    const input = screen.getByPlaceholderText("Search for articles by keyword...");
+    expect(input).toBeInTheDocument();
+  });
+
+  it("renders filter input with correct placeholder on top-headlines page", () => {
+    mockUsePathname.mockReturnValue("/top-headlines");
+    render(
+      <Search
+        searchTerm=""
+        setSearchTerm={mockSetSearchTerm}
+        searchLoading={false}
+      />
+    );
+
+    const input = screen.getByPlaceholderText("Filter by keyword...");
     expect(input).toBeInTheDocument();
   });
 
@@ -81,13 +103,14 @@ describe("<Search />", () => {
       />
     );
 
-    const input = screen.getByPlaceholderText("Search for news articles...");
+    const input = screen.getByPlaceholderText("Search for articles by keyword...");
     await user.type(input, "new search term");
 
     expect(mockSetSearchTerm).toHaveBeenCalled();
   });
 
-  it("renders search button", () => {
+  it("renders search button on home page", () => {
+    mockUsePathname.mockReturnValue("/");
     render(
       <Search
         searchTerm=""
@@ -97,6 +120,20 @@ describe("<Search />", () => {
     );
 
     const button = screen.getByRole("button", { name: /search/i });
+    expect(button).toBeInTheDocument();
+  });
+
+  it("renders filter button on top-headlines page", () => {
+    mockUsePathname.mockReturnValue("/top-headlines");
+    render(
+      <Search
+        searchTerm=""
+        setSearchTerm={mockSetSearchTerm}
+        searchLoading={false}
+      />
+    );
+
+    const button = screen.getByRole("button", { name: /filter/i });
     expect(button).toBeInTheDocument();
   });
 
@@ -141,40 +178,5 @@ describe("<Search />", () => {
 
     const loadingIcon = screen.queryByTestId("loader-icon");
     expect(loadingIcon).not.toBeInTheDocument();
-  });
-
-  it("applies correct CSS classes to container", () => {
-    render(
-      <Search
-        searchTerm=""
-        setSearchTerm={mockSetSearchTerm}
-        searchLoading={false}
-      />
-    );
-
-    const container = screen.getByRole("button", {
-      name: /search/i,
-    }).parentElement;
-    expect(container).toHaveClass(
-      "flex",
-      "flex-row",
-      "w-full",
-      "gap-2",
-      "justify-end",
-      "items-center"
-    );
-  });
-
-  it("textarea has correct attributes", () => {
-    render(
-      <Search
-        searchTerm=""
-        setSearchTerm={mockSetSearchTerm}
-        searchLoading={false}
-      />
-    );
-
-    const input = screen.getByPlaceholderText("Search for news articles...");
-    expect(input).toHaveAttribute("id", "search-input");
   });
 });

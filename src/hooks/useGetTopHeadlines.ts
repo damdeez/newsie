@@ -5,7 +5,7 @@ import { API_URL } from "@/utils/constants";
 import { uniqueArticles } from "@/utils/helpers";
 import { useState, useEffect } from "react";
 
-export const useGetTopHeadlines = (country: string) => {
+export const useGetTopHeadlines = (country: string, query?: string) => {
   const [data, setData] = useState<INewsApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -15,7 +15,12 @@ export const useGetTopHeadlines = (country: string) => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `${API_URL}/top-headlines?country=${country}&apiKey=${process.env.NEXT_PUBLIC_NEWS_API_KEY}`
+          `${API_URL}/top-headlines?country=${country}&?q=${query}`,
+          {
+            headers: {
+              "X-Api-Key": process.env.NEXT_PUBLIC_NEWS_API_KEY || "",
+            },
+          }
         );
         if (!response.ok) {
           setError("An error occurred, please try refreshing the page.");
@@ -34,7 +39,7 @@ export const useGetTopHeadlines = (country: string) => {
     };
 
     fetchData();
-  }, [country]);
+  }, [country, query]);
 
   return { data, loading, error };
 };

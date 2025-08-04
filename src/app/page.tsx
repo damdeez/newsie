@@ -17,25 +17,24 @@ export default function Home() {
   console.info(">>> Data fetched:", data);
 
   return (
-    <main className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
+    <main className="font-sans grid items-start justify-items-center min-h-screen p-2 sm:p-8 pb-20 gap-4 sm:gap-16">
       <Header
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
         loading={loading}
       />
-      <section className="w-full flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Articles
-          title={searchTerm}
-          articles={data?.articles}
-          loading={loading}
-        />
-      </section>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://www.damir.fun"
-          target="_blank"
-          rel="noopener noreferrer"
+      <Articles
+        title={searchTerm}
+        articles={data?.articles}
+        loading={loading}
+      />
+      {!loading && (
+        <footer className="row-start-3 flex gap-4 sm:gap-6 flex-wrap items-center justify-center px-4">
+          <a
+            className="flex items-center gap-2 hover:underline hover:underline-offset-4 text-sm"
+            href="https://www.damir.fun"
+            target="_blank"
+            rel="noopener noreferrer"
         >
           <Image
             aria-hidden
@@ -47,6 +46,7 @@ export default function Home() {
           Created by Damir →
         </a>
       </footer>
+    )}
     </main>
   );
 }
