@@ -8,10 +8,10 @@ import { useSearch } from "@/contexts/SearchContext";
 
 export default function TopHeadlines() {
   const { searchTerm } = useSearch();
-  const { data, loading } = useGetTopHeadlines("us", searchTerm);
+  const { data, loading } = useGetTopHeadlines("us");
 
   return (
-    <main className="font-sans grid items-start justify-items-center min-h-screen p-2 sm:p-8 pb-20 gap-4 sm:gap-16">
+    <main className="font-sans grid items-start justify-items-center min-h-screen p-4 sm:p-8 pb-20 gap-4 sm:gap-16">
       <Header />
       <Articles
         title={searchTerm}

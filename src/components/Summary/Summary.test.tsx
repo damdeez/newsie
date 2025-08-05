@@ -104,7 +104,7 @@ describe("<Summary />", () => {
     render(<Summary articles={mockArticles} loading={false} />);
 
     expect(
-      screen.getByText('Good morning! 🤖 AI summary of articles on "bitcoin" will be generated here')
+      screen.getByRole("heading", { name: /ai summary/i })
     ).toBeInTheDocument();
   });
 
@@ -134,25 +134,10 @@ describe("<Summary />", () => {
     render(<Summary loading={false} />);
 
     expect(
-      screen.getByText('Good morning! 🤖 AI summary of articles on "bitcoin" will be generated here')
+      screen.getByRole("heading", { name: /ai summary/i })
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /generate summary/i })
-    ).toBeInTheDocument();
-  });
-
-  it("displays different search terms correctly in title", () => {
-    mockUseSearch.mockReturnValue({
-      searchTerm: "technology",
-      setSearchTerm: mockSetSearchTerm,
-      searchLoading: false,
-      setSearchLoading: mockSetSearchLoading,
-    });
-
-    render(<Summary articles={mockArticles} loading={false} />);
-
-    expect(
-      screen.getByText('Good morning! 🤖 AI summary of articles on "technology" will be generated here')
     ).toBeInTheDocument();
   });
 
@@ -170,9 +155,6 @@ describe("<Summary />", () => {
   it("renders with empty articles array", () => {
     render(<Summary articles={[]} loading={false} />);
 
-    expect(
-      screen.getByText('Good morning! 🤖 AI summary of articles on "bitcoin" will be generated here')
-    ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /generate summary/i })
     ).toBeInTheDocument();

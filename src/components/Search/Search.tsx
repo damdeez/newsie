@@ -7,7 +7,6 @@ import { useState } from "react";
 const Search = () => {
   const { searchTerm, setSearchTerm, searchLoading } = useSearch();
   const [query, setQuery] = useState(searchTerm);
-  console.info(">>> Search query:", query);
 
   // TODO: maybe use form here instead of button click
   return (

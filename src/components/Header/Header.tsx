@@ -13,7 +13,7 @@ const navigation = [
 const Header = () => {
   const pathname = usePathname();
   const linkStyles =
-    "w-[100px] sm:w-[125px] h-[35px] flex justify-center items-center text-xs sm:text-sm px-2 sm:px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors";
+    "sm:w-[125px] w-[100px] !min-h-[40px] !max-h-[40px] sm:!min-h-[35px] sm:!max-h-[35px] flex justify-center items-center text-sm sm:px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors";
 
   return (
     <header className="w-full max-w-6xl flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0">
@@ -26,7 +26,7 @@ const Header = () => {
           height={32}
           priority
         />
-        <nav className="flex gap-2 sm:gap-4 sm:ml-8">
+        <nav className="flex gap-2">
           {navigation.map((item) => (
             <Link
               key={item.name}
@@ -41,7 +41,7 @@ const Header = () => {
           ))}
         </nav>
       </div>
-      <div className="w-full sm:w-auto sm:ml-4">
+      <div className="w-full sm:w-auto">
         <Search />
       </div>
     </header>
