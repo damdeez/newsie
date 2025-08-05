@@ -14,8 +14,8 @@ import { Loader2 } from "lucide-react";
 const tempSearchTerm = "artificial intelligence";
 
 function Home() {
-  const { searchTerm, setSearchTerm, debouncedSearchTerm } = useSearch();
-  const { data, loading } = useGetEverythingByQuery(debouncedSearchTerm);
+  const { searchTerm, setSearchTerm } = useSearch();
+  const { data, loading } = useGetEverythingByQuery(searchTerm);
 
   useEffect(() => {
     if (!searchTerm) {

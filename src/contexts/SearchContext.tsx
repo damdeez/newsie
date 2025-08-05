@@ -1,14 +1,12 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import { useDebounce } from "@/hooks/useDebounce";
 
 interface SearchContextType {
   searchTerm: string;
   setSearchTerm: (term: string) => void;
   searchLoading: boolean;
   setSearchLoading: (loading: boolean) => void;
-  debouncedSearchTerm: string;
 }
 
 const SearchContext = createContext<SearchContextType | undefined>(undefined);
@@ -24,7 +22,6 @@ export const SearchProvider = ({
 }: SearchProviderProps) => {
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
   const [searchLoading, setSearchLoading] = useState(false);
-  const debouncedSearchTerm = useDebounce(searchTerm);
 
   return (
     <SearchContext.Provider
@@ -33,8 +30,6 @@ export const SearchProvider = ({
         setSearchTerm,
         searchLoading,
         setSearchLoading,
-        // TODO: Take this out since we are not searching on every keystroke
-        debouncedSearchTerm,
       }}
     >
       {children}

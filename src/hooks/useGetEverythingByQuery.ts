@@ -18,7 +18,12 @@ export const useGetEverythingByQuery = (query: string) => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `${API_URL}/everything?q=${query}&language=en&from=${oneMonthAgo}&sortBy=publishedAt&apiKey=${process.env.NEXT_PUBLIC_NEWS_API_KEY}`
+          `${API_URL}/everything?q=${query}&language=en&from=${oneMonthAgo}&sortBy=publishedAt`,
+          {
+            headers: {
+              "X-Api-Key": process.env.NEXT_PUBLIC_NEWS_API_KEY || "",
+            },
+          }
         );
         if (!response.ok) {
           setError("An error occurred, please try refreshing the page.");

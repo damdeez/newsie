@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { generateText } from "ai";
+import { streamText } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
@@ -45,14 +45,18 @@ const Summary = ({ articles }: SummaryProps) => {
 
   const handleGenerateSummary = async () => {
     setLoadingSummary(true);
-    try {
-      const { text: aiText } = await generateText({
+    try { 
+      // TODO: decide if we want to use generateText or streamText
+      const { textStream: aiText } = streamText({
         model: openai("o3-mini"),
         prompt: `Generate a summary for the following articles based on a search query ${searchTerm}, be concise and easy to understand while having a friendly-tone towards the user who is reading your response: ${articles
           ?.map((article) => article.description)
           .join(", ")}`,
       });
-      setAiResponse(aiText);
+      for await (const delta of aiText) {
+        // TODO: probably need to handle this better for performance reasons
+        setAiResponse(prev => prev + delta);
+      }
     } catch (error) {
       console.error("Error generating summary:", error);
       setAiResponse("An error occurred while generating the summary.");
@@ -77,8 +81,11 @@ const Summary = ({ articles }: SummaryProps) => {
         </Button>
       )}
       {aiResponse && (
-        <div className="w-lg mt-4 p-4 bg-white dark:bg-gray-700 rounded-lg" data-testid="ai-summary-response">
-          <p>{formatText(aiResponse)}</p>
+        <div
+          className="w-lg mt-4 p-4 bg-white dark:bg-gray-700 rounded-lg"
+          data-testid="ai-summary-response"
+        >
+          {formatText(aiResponse)}
         </div>
       )}
     </section>

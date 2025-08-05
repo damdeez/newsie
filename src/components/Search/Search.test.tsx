@@ -61,7 +61,6 @@ describe("<Search />", () => {
       setSearchTerm: mockSetSearchTerm,
       searchLoading: false,
       setSearchLoading: mockSetSearchLoading,
-      debouncedSearchTerm: "",
     });
   });
 
@@ -117,7 +116,6 @@ describe("<Search />", () => {
       setSearchTerm: mockSetSearchTerm,
       searchLoading: true,
       setSearchLoading: mockSetSearchLoading,
-      debouncedSearchTerm: "",
     });
     render(<Search />);
 
@@ -131,7 +129,6 @@ describe("<Search />", () => {
       setSearchTerm: mockSetSearchTerm,
       searchLoading: false,
       setSearchLoading: mockSetSearchLoading,
-      debouncedSearchTerm: "",
     });
     render(<Search />);
 

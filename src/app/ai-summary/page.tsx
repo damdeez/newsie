@@ -41,10 +41,10 @@ const formatText = (text: string) => {
 };
 
 function AiSummary() {
-  const { searchTerm, setSearchTerm, debouncedSearchTerm } = useSearch();
+  const { searchTerm, setSearchTerm } = useSearch();
   const [text, setText] = useState("");
   const [loadingSummary, setLoadingSummary] = useState(false);
-  const { data, loading } = useGetEverythingByQuery(debouncedSearchTerm);
+  const { data, loading } = useGetEverythingByQuery(searchTerm);
 
   useEffect(() => {
     if (!searchTerm) {

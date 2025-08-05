@@ -61,7 +61,6 @@ const MockSearchProvider = ({ children }: { children: React.ReactNode }) => {
     setSearchTerm: jest.fn(),
     searchLoading: false,
     setSearchLoading: jest.fn(),
-    debouncedSearchTerm: "",
   };
   
   return React.createElement(

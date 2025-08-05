@@ -81,7 +81,6 @@ describe("<Summary />", () => {
       setSearchTerm: mockSetSearchTerm,
       searchLoading: false,
       setSearchLoading: mockSetSearchLoading,
-      debouncedSearchTerm: "bitcoin",
     });
     console.error = jest.fn();
   });
@@ -108,7 +107,6 @@ describe("<Summary />", () => {
       setSearchTerm: mockSetSearchTerm,
       searchLoading: true,
       setSearchLoading: mockSetSearchLoading,
-      debouncedSearchTerm: "bitcoin",
     });
 
     render(<Summary articles={mockArticles} />);
@@ -134,7 +132,6 @@ describe("<Summary />", () => {
       setSearchTerm: mockSetSearchTerm,
       searchLoading: false,
       setSearchLoading: mockSetSearchLoading,
-      debouncedSearchTerm: "technology",
     });
 
     render(<Summary articles={mockArticles} />);
