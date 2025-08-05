@@ -1,7 +1,6 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { useGetEverythingByQuery } from "./useGetEverythingByQuery";
 import { INewsApiResponse, INewsApiArticle } from "../types/types";
-import * as helpers from "../utils/helpers";
 
 // Mock the SearchContext
 const mockSetSearchLoading = jest.fn();

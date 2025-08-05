@@ -189,12 +189,12 @@ describe("helpers", () => {
 
     const mockDateImplementation = (mockDate: Date) => {
       const OriginalDate = Date;
-      return jest.spyOn(global, "Date").mockImplementation(((...args: any[]) => {
+      return jest.spyOn(global, "Date").mockImplementation(((...args: unknown[]) => {
         if (args.length === 0) {
           return mockDate;
         }
         return new OriginalDate(...(args as ConstructorParameters<typeof Date>));
-      }) as any);
+      }));
     };
 
     it("should return date one month ago in YYYY-MM-DD format", () => {
