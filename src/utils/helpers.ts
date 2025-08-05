@@ -14,6 +14,18 @@ export const uniqueArticles = (articles: INewsApiArticle[]) => {
   return uniqueArticles;
 };
 
+export const getTimeOfDayGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) {
+    return "Good morning!";
+  }
+  if (hour < 18) {
+    return "Good afternoon!";
+  }
+
+  return "Good evening!";
+};
+
 // Function to get a month ago from today's date
 export const oneMonthAgo = () => {
   const date = new Date();

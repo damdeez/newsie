@@ -7,8 +7,7 @@ import { usePathname } from "next/navigation";
 
 const navigation = [
   { name: "Home", href: "/" },
-  { name: "Top Headlines", href: "/top-headlines" },
-  { name: "AI Summary", href: "/ai-summary" },
+  { name: "Top Headlines", href: "/top-headlines" }
 ];
 
 const Header = () => {

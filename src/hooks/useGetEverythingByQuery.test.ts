@@ -29,7 +29,7 @@ jest.mock("../utils/helpers", () => {
   const actual = jest.requireActual("../utils/helpers");
   return {
     ...actual,
-    oneMonthAgo: "2023-01-01",
+    oneMonthAgo: jest.fn(() => "2023-01-01"),
   };
 });
 
@@ -77,6 +77,15 @@ describe("useGetEverythingByQuery", () => {
     expect(result.current.error).toBeNull();
   });
 
+  it("should not fetch when query is empty", () => {
+    const { result } = renderHook(() => useGetEverythingByQuery(""));
+
+    expect(result.current.data).toBeNull();
+    expect(result.current.loading).toBe(true); // Loading is set to true initially
+    expect(result.current.error).toBeNull();
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
   it("should fetch data successfully", async () => {
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
@@ -98,7 +107,7 @@ describe("useGetEverythingByQuery", () => {
 
     // Verify correct API call
     expect(fetch).toHaveBeenCalledWith(
-      "https://newsapi.org/v2/everything?q=bitcoin&language=en&from=2023-01-01&sortBy=publishedAt",
+      "https://newsapi.org/v2/everything?language=en&from=2023-01-01&sortBy=publishedAt&q=bitcoin",
       {
         headers: {
           "X-Api-Key": "test-api-key",
@@ -219,7 +228,7 @@ describe("useGetEverythingByQuery", () => {
 
     expect(fetch).toHaveBeenCalledTimes(2);
     expect(fetch).toHaveBeenLastCalledWith(
-      "https://newsapi.org/v2/everything?q=ethereum&language=en&from=2023-01-01&sortBy=publishedAt",
+      "https://newsapi.org/v2/everything?language=en&from=2023-01-01&sortBy=publishedAt&q=ethereum",
       {
         headers: {
           "X-Api-Key": "test-api-key",

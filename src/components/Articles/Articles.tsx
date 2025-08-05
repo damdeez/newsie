@@ -1,6 +1,6 @@
 import { INewsApiArticle } from "@/types/types";
 import { Loader2 } from "lucide-react";
-import Image from "next/image";
+// import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 interface ArticlesProps {
@@ -24,7 +24,7 @@ const Articles = ({ title, articles, loading }: ArticlesProps) => {
   }
 
   return (
-    <section className="w-full max-w-6xl mx-auto">
+    <section className="w-full max-w-6xl mx-auto items-start">
       <h2 className="text-xl font-bold mb-4">
         {isTopHeadlines
           ? "Top Headlines"
@@ -42,7 +42,8 @@ const Articles = ({ title, articles, loading }: ArticlesProps) => {
               >
                 {article.title}
               </a>
-              {article.urlToImage && (
+              {/* Article image preview */}
+              {/* {article.urlToImage && (
                 <div className="absolute right-[140px] top-[40px] invisible group-hover:visible bg-white border border-gray-300 rounded-lg shadow-lg p-1 z-10 w-64">
                   <Image
                     src={article.urlToImage}
@@ -55,7 +56,7 @@ const Articles = ({ title, articles, loading }: ArticlesProps) => {
                     {article.description}
                   </p>
                 </div>
-              )}
+              )} */}
             </div>
 
             <p className="text-sm text-gray-500 mb-1">

@@ -6,17 +6,15 @@ import useGetTopHeadlines from "@/hooks/useGetTopHeadlines";
 import Header from "@/components/Header/Header";
 import { useSearch } from "@/contexts/SearchContext";
 
-export default function Home() {
-  const { searchTerm: filterTerm } = useSearch();
-  const { data, loading } = useGetTopHeadlines("us");
-
-  console.info(">>> Data fetched:", data);
+export default function TopHeadlines() {
+  const { searchTerm } = useSearch();
+  const { data, loading } = useGetTopHeadlines("us", searchTerm);
 
   return (
     <main className="font-sans grid items-start justify-items-center min-h-screen p-2 sm:p-8 pb-20 gap-4 sm:gap-16">
       <Header />
       <Articles
-        title={filterTerm}
+        title={searchTerm}
         articles={data?.articles}
         loading={loading}
       />

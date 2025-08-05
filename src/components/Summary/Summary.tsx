@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { useSearch } from "@/contexts/SearchContext";
 import { INewsApiArticle } from "@/types/types";
+import { getTimeOfDayGreeting } from "@/utils/helpers";
 
 const apiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
 const openai = createOpenAI({
@@ -36,16 +37,17 @@ const formatText = (text: string) => {
 
 interface SummaryProps {
   articles?: INewsApiArticle[];
+  loading: boolean;
 }
 
-const Summary = ({ articles }: SummaryProps) => {
+const Summary = ({ articles, loading }: SummaryProps) => {
   const [aiResponse, setAiResponse] = useState("");
   const [loadingSummary, setLoadingSummary] = useState(false);
   const { searchTerm, searchLoading } = useSearch();
 
   const handleGenerateSummary = async () => {
     setLoadingSummary(true);
-    try { 
+    try {
       // TODO: decide if we want to use generateText or streamText
       const { textStream: aiText } = streamText({
         model: openai("o3-mini"),
@@ -55,7 +57,7 @@ const Summary = ({ articles }: SummaryProps) => {
       });
       for await (const delta of aiText) {
         // TODO: probably need to handle this better for performance reasons
-        setAiResponse(prev => prev + delta);
+        setAiResponse((prev) => prev + delta);
       }
     } catch (error) {
       console.error("Error generating summary:", error);
@@ -64,14 +66,21 @@ const Summary = ({ articles }: SummaryProps) => {
       setLoadingSummary(false);
     }
   };
+
+  if (loading) {
+    return null;
+  }
+
   return (
-    <section className="flex w-full flex-col p-4 max-h-min bg-gray-100 dark:bg-gray-800 rounded-lg">
+    <section className="flex w-full flex-col p-4 max-h-96 md:h-min bg-gray-100 dark:bg-gray-800 rounded-b-none md:rounded-b-lg rounded-lg fixed bottom-0 left-0 right-0 sm:sticky sm:bottom-16 z-10 overflow-y-auto">
       <h2 className="text-lg font-semibold mb-2">
-        AI Summary 🤖 of recent news on &quot;{searchTerm}&quot;
+        {!aiResponse
+          ? `${getTimeOfDayGreeting()} 🤖 AI summary of articles on "${searchTerm}" will be generated here!`
+          : `Enjoy your summary of recent news on "${searchTerm}"!`}
       </h2>
       {!aiResponse && (
         <Button
-          className="flex bg-transparent align-middle justify-center w-full sm:w-[200px] h-[35px] hover:cursor-pointer"
+          className="flex bg-transparent align-middle justify-center w-full !min-h-[40px] !max-h-[40px] sm:!min-h-[35px] sm:!max-h-[35px] hover:cursor-pointer"
           variant="outline"
           onClick={handleGenerateSummary}
           disabled={searchLoading || loadingSummary || aiResponse.length > 0}
@@ -82,7 +91,7 @@ const Summary = ({ articles }: SummaryProps) => {
       )}
       {aiResponse && (
         <div
-          className="w-lg mt-4 p-4 bg-white dark:bg-gray-700 rounded-lg"
+          className="mt-4 p-4 bg-white dark:bg-gray-700 rounded-lg overflow-y-auto"
           data-testid="ai-summary-response"
         >
           {formatText(aiResponse)}

@@ -17,9 +17,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 * Make sure all of your changes are clean of Eslint and TypeScript errors.
 * Use `pnpm` over any other package manager.
 * Use TailwindCSS for styling and make sure the version you are referencing is compatible with the version in package.json.
-* Don't write tests for any files located in `/src/components/ui`
-* Don't write tests to check for styling in components and make sure to check tests for TS errors
-* Always use semicolons after statements
+* Don't write tests for any files located in `/src/components/ui`.
+* Don't write tests to check for styling in components and make sure to check tests for TS errors.
+* Limit leaving comments in tests unless the test is really intricate.
+* Always use semicolons after statements.
 
 ## Project Overview
 

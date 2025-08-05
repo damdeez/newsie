@@ -8,7 +8,7 @@ import { useSearch } from "@/contexts/SearchContext";
 
 export const useGetEverythingByQuery = (query: string) => {
   const [data, setData] = useState<INewsApiResponse | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { setSearchLoading } = useSearch();
 
@@ -18,7 +18,9 @@ export const useGetEverythingByQuery = (query: string) => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `${API_URL}/everything?q=${query}&language=en&from=${oneMonthAgo}&sortBy=publishedAt`,
+          `${API_URL}/everything?language=en&from=${oneMonthAgo()}&sortBy=publishedAt${
+            query ? `&q=${query}` : ""
+          }`,
           {
             headers: {
               "X-Api-Key": process.env.NEXT_PUBLIC_NEWS_API_KEY || "",
@@ -44,7 +46,10 @@ export const useGetEverythingByQuery = (query: string) => {
       }
     };
 
-    fetchData();
+    if (query) {
+      fetchData();
+    }
+    
   }, [query, setSearchLoading]);
 
   return { data, loading, error };

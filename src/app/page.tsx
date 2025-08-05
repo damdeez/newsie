@@ -23,25 +23,28 @@ function Home() {
     }
   }, [searchTerm, setSearchTerm]);
 
-  // TODO: this loading state needs to look better
+  // TODO: Generic error handling
   if (loading) {
     return (
-      <p>
-        <Loader2 className="animate-spin" />
-      </p>
+      <main className="font-sans grid items-start justify-items-center min-h-screen p-2 sm:p-8 pb-20 gap-4 sm:gap-16">
+        <Header />
+        <div className="grid max-w-6xl grid-cols-[3fr_2fr] w-full gap-4 relative">
+          <Loader2 className="animate-spin" />
+        </div>
+      </main>
     );
   }
-  
+
   return (
     <main className="font-sans grid items-start justify-items-center min-h-screen p-2 sm:p-8 pb-20 gap-4 sm:gap-16">
       <Header />
-      <div className="grid max-w-6xl grid-cols-[3fr_2fr] w-full gap-4">
+      <div className="grid max-w-6xl grid-cols-1 md:grid-cols-[3fr_2fr] w-full gap-4 relative">
         <Articles
           title={searchTerm}
           articles={data?.articles}
           loading={loading}
         />
-        <Summary articles={data?.articles} />
+        <Summary articles={data?.articles} loading={loading} />
       </div>
       {!loading && (
         <footer className="row-start-3 flex gap-4 sm:gap-6 flex-wrap items-center justify-center px-4">

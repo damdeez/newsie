@@ -3,11 +3,14 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Summary from "./Summary";
 import { INewsApiArticle } from "@/types/types";
+import { streamText } from "ai";
 
-// Mock ai module
+// Mock ai module  
 jest.mock("ai", () => ({
-  generateText: jest.fn(),
+  streamText: jest.fn(),
 }));
+
+const mockStreamText = streamText as jest.MockedFunction<typeof streamText>;
 
 // Mock @ai-sdk/openai
 jest.mock("@ai-sdk/openai", () => ({
@@ -51,6 +54,11 @@ jest.mock("lucide-react", () => ({
   ),
 }));
 
+// Mock utils/helpers
+jest.mock("../../utils/helpers", () => ({
+  getTimeOfDayGreeting: jest.fn(() => "Good morning!"),
+}));
+
 const mockArticles: INewsApiArticle[] = [
   {
     source: { id: "test", name: "Test Source" },
@@ -82,19 +90,26 @@ describe("<Summary />", () => {
       searchLoading: false,
       setSearchLoading: mockSetSearchLoading,
     });
+    
+    mockStreamText.mockResolvedValue({
+      textStream: (async function* () {
+        yield "This is a test summary about the news articles.";
+      })(),
+    });
+    
     console.error = jest.fn();
   });
 
   it("renders the summary component with correct title", () => {
-    render(<Summary articles={mockArticles} />);
+    render(<Summary articles={mockArticles} loading={false} />);
 
     expect(
-      screen.getByText('AI Summary 🤖 of recent news on "bitcoin"')
+      screen.getByText('Good morning! 🤖 AI summary of articles on "bitcoin" will be generated here')
     ).toBeInTheDocument();
   });
 
   it("renders generate summary button", () => {
-    render(<Summary articles={mockArticles} />);
+    render(<Summary articles={mockArticles} loading={false} />);
 
     const button = screen.getByRole("button", { name: /generate summary/i });
     expect(button).toBeInTheDocument();
@@ -109,17 +124,17 @@ describe("<Summary />", () => {
       setSearchLoading: mockSetSearchLoading,
     });
 
-    render(<Summary articles={mockArticles} />);
+    render(<Summary articles={mockArticles} loading={false} />);
 
     const button = screen.getByRole("button", { name: /generate summary/i });
     expect(button).toBeDisabled();
   });
 
   it("renders without articles prop", () => {
-    render(<Summary />);
+    render(<Summary loading={false} />);
 
     expect(
-      screen.getByText('AI Summary 🤖 of recent news on "bitcoin"')
+      screen.getByText('Good morning! 🤖 AI summary of articles on "bitcoin" will be generated here')
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /generate summary/i })
@@ -134,38 +149,82 @@ describe("<Summary />", () => {
       setSearchLoading: mockSetSearchLoading,
     });
 
-    render(<Summary articles={mockArticles} />);
+    render(<Summary articles={mockArticles} loading={false} />);
 
     expect(
-      screen.getByText('AI Summary 🤖 of recent news on "technology"')
+      screen.getByText('Good morning! 🤖 AI summary of articles on "technology" will be generated here')
     ).toBeInTheDocument();
   });
 
   it("button calls handleGenerateSummary on click", async () => {
     const user = userEvent.setup();
-    render(<Summary articles={mockArticles} />);
+    render(<Summary articles={mockArticles} loading={false} />);
 
     const button = screen.getByRole("button", { name: /generate summary/i });
     await user.click(button);
 
-    // The button should at least be clickable
+    await screen.findByTestId('ai-summary-response');
     expect(screen.getByTestId('ai-summary-response')).toBeInTheDocument();
   });
 
   it("renders with empty articles array", () => {
-    render(<Summary articles={[]} />);
+    render(<Summary articles={[]} loading={false} />);
 
     expect(
-      screen.getByText('AI Summary 🤖 of recent news on "bitcoin"')
+      screen.getByText('Good morning! 🤖 AI summary of articles on "bitcoin" will be generated here')
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /generate summary/i })
     ).toBeInTheDocument();
   });
 
-  it("format text function handles regular text correctly", () => {
-    render(<Summary articles={mockArticles} />);
+  it("does not render when loading is true", () => {
+    const { container } = render(<Summary articles={mockArticles} loading={true} />);
+    expect(container.firstChild).toBeNull();
+  });
+
+  it("shows different title when AI response exists", () => {
+    render(<Summary articles={mockArticles} loading={false} />);
     
+    const button = screen.getByRole("button", { name: /generate summary/i });
+    userEvent.click(button);
+
     expect(screen.getByRole("button")).toBeInTheDocument();
+  });
+
+  it("button shows correct text when clicked", async () => {
+    const user = userEvent.setup();
+    render(<Summary articles={mockArticles} loading={false} />);
+
+    const button = screen.getByRole("button", { name: /generate summary/i });
+    await user.click(button);
+
+    await screen.findByTestId('ai-summary-response');
+    expect(screen.getByTestId('ai-summary-response')).toBeInTheDocument();
+  });
+
+  it("hides button when AI response is generated", async () => {
+    const user = userEvent.setup();
+    render(<Summary articles={mockArticles} loading={false} />);
+
+    const button = screen.getByRole("button", { name: /generate summary/i });
+    await user.click(button);
+
+    await screen.findByTestId('ai-summary-response');
+    
+    expect(screen.queryByRole("button", { name: /generate summary/i })).not.toBeInTheDocument();
+  });
+
+  it("handles error during summary generation", async () => {
+    mockStreamText.mockRejectedValue(new Error("API Error"));
+    
+    const user = userEvent.setup();
+    render(<Summary articles={mockArticles} loading={false} />);
+
+    const button = screen.getByRole("button", { name: /generate summary/i });
+    await user.click(button);
+
+    await screen.findByTestId('ai-summary-response');
+    expect(screen.getByText("An error occurred while generating the summary.")).toBeInTheDocument();
   });
 });
