@@ -51,7 +51,7 @@ function Home() {
   return (
     <main className="font-sans grid items-start justify-items-center min-h-screen p-4 sm:p-8 pb-20 gap-4 sm:gap-16">
       <Header />
-      <div className="grid max-w-6xl grid-cols-1 md:grid-cols-[3fr_2fr] w-full gap-4 relative">
+      <div className="grid max-w-6xl grid-cols-1 lg:grid-cols-[3fr_2fr] w-full gap-4 relative">
         <Articles
           title={searchTerm}
           articles={data?.articles}

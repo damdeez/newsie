@@ -16,7 +16,7 @@ const Header = () => {
     "sm:w-[125px] w-[100px] !min-h-[40px] !max-h-[40px] sm:!min-h-[35px] sm:!max-h-[35px] flex justify-center items-center text-sm sm:px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors";
 
   return (
-    <header className="w-full max-w-6xl flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0">
+    <header className="w-full max-w-6xl flex flex-col lg:flex-row justify-between items-center gap-4 lg:gap-0">
       <div className="flex items-center justify-between w-full sm:w-auto">
         <Image
           className="dark:invert"
@@ -41,7 +41,7 @@ const Header = () => {
           ))}
         </nav>
       </div>
-      <div className="w-full sm:w-auto">
+      <div className="w-full md:w-auto">
         <Search />
       </div>
     </header>

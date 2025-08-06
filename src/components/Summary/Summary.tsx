@@ -82,7 +82,7 @@ const Summary = ({ articles, loading }: SummaryProps) => {
   }
 
   return (
-    <section className="flex w-full flex-col p-4 max-h-96 md:h-min bg-gray-100 dark:bg-gray-800 rounded-b-none md:rounded-b-lg rounded-lg fixed bottom-0 left-0 right-0 sm:sticky sm:bottom-16 z-10 overflow-y-auto">
+    <section className="flex w-full flex-col p-4 max-h-96 md:h-min bg-gray-100 dark:bg-gray-800 rounded-b-none lg:rounded-b-lg rounded-lg fixed bottom-0 left-0 right-0 lg:sticky lg:bottom-16 z-10 overflow-y-auto">
       <h2 className="text-md sm:text-lg font-semibold mb-4 sm:mb-2">
         {!aiResponse
           ? `${getTimeOfDayGreeting()} 🤖 ${
