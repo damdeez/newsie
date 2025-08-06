@@ -90,7 +90,9 @@ const Summary = ({ articles, loading }: SummaryProps) => {
                 ? "AI summary of top headlines will be generated here."
                 : `AI summary of articles on "${searchTerm}" will be generated here.`
             }`
-          : `Enjoy your summary of recent news on "${searchTerm}".`}
+          : `Enjoy your summary of recent news on ${
+              isOnTopHeadlines ? "top headlines" : `"${searchTerm}"`
+            }.`}
       </h2>
       {!aiResponse && (
         <Button
