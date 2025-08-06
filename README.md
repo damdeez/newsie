@@ -1,6 +1,6 @@
 # Newsie 📰 (just another News app) 🤘
 
-Uses the News API (https://newsapi.org/) to bring you the latest News from around the world. 
+Uses the News API (https://newsapi.org/) to bring you the latest News from around the world. Uses the `ai` SDK to generate a summary of the news using OpenAI. 
 
 ## Getting Started 🚀
 
