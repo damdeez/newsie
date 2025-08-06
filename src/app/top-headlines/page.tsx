@@ -1,7 +1,7 @@
 "use client";
 
+import { SquareArrowOutUpRight } from "lucide-react";
 import Articles from "@/components/Articles/Articles";
-import Image from "next/image";
 import useGetTopHeadlines from "@/hooks/useGetTopHeadlines";
 import Header from "@/components/Header/Header";
 import { useSearch } from "@/contexts/SearchContext";
@@ -26,14 +26,7 @@ export default function TopHeadlines() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Image
-              aria-hidden
-              src="/globe.svg"
-              alt="Globe icon"
-              width={16}
-              height={16}
-            />
-            Created by Damir →
+            <SquareArrowOutUpRight size={15} /> Created by Damir 👨‍💻
           </a>
         </footer>
       )}

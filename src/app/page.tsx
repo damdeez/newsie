@@ -4,18 +4,17 @@ import { useEffect } from "react";
 
 import Articles from "@/components/Articles/Articles";
 import useGetEverythingByQuery from "@/hooks/useGetEverythingByQuery";
-import Image from "next/image";
 import Header from "@/components/Header/Header";
 import { useSearch } from "@/contexts/SearchContext";
-
 import Summary from "@/components/Summary/Summary";
-import { Loader2 } from "lucide-react";
+import { AlertCircleIcon, Loader2, SquareArrowOutUpRight } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const tempSearchTerm = "artificial intelligence";
 
 function Home() {
   const { searchTerm, setSearchTerm } = useSearch();
-  const { data, loading } = useGetEverythingByQuery(searchTerm);
+  const { data, loading, error } = useGetEverythingByQuery(searchTerm);
 
   useEffect(() => {
     if (!searchTerm) {
@@ -23,13 +22,27 @@ function Home() {
     }
   }, [searchTerm, setSearchTerm]);
 
-  // TODO: Generic error handling
   if (loading) {
     return (
       <main className="font-sans grid items-start justify-items-center min-h-screen p-4 sm:p-8 pb-20 gap-4 sm:gap-16">
         <Header />
-        <div className="grid max-w-6xl grid-cols-[3fr_2fr] w-full gap-4 relative">
+        <div className="grid max-w-6xl w-full gap-4 relative">
           <Loader2 className="animate-spin" />
+        </div>
+      </main>
+    );
+  } else if (error) {
+    return (
+      <main className="font-sans grid items-start justify-items-center p-4 sm:p-8 pb-20 gap-4 sm:gap-16">
+        <Header />
+        <div className="grid max-w-6xl w-full gap-4 relative">
+          <Alert variant="destructive">
+            <AlertCircleIcon />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>
+              Failed to fetch articles. Please try refreshing the page.
+            </AlertDescription>
+          </Alert>
         </div>
       </main>
     );
@@ -54,14 +67,7 @@ function Home() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Image
-              aria-hidden
-              src="/globe.svg"
-              alt="Globe icon"
-              width={16}
-              height={16}
-            />
-            Created by Damir →
+            <SquareArrowOutUpRight size={15} /> Created by Damir 👾
           </a>
         </footer>
       )}
