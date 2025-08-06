@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/form";
 import { usePathname } from "next/navigation";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import useWindowDimensions from "@/hooks/useWindowDimensions";
 
 const FormSchema = z.object({
   Search: z
@@ -30,14 +31,15 @@ const FormSchema = z.object({
 
 function Search() {
   const { searchTerm, setSearchTerm, searchLoading } = useSearch();
+  const pathname = usePathname();
+  const isOnTopHeadlines = pathname === "/top-headlines";
+  const windowDimensions = useWindowDimensions();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      Search: searchTerm,
+      Search: !isOnTopHeadlines ? searchTerm : "",
     },
   });
-  const pathname = usePathname();
-  const isOnTopHeadlines = pathname === "/top-headlines";
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     setSearchTerm(data.Search);
@@ -50,16 +52,17 @@ function Search() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col sm:flex-row w-full gap-2 justify-center sm:justify-end items-stretch sm:items-center"
       >
-        {isOnTopHeadlines && (
-          <Tooltip>
-            <TooltipTrigger className="hover:cursor-pointer">
-              <InfoIcon size={16} className="hidden sm:block text-gray-500" />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Search functionality is on this page is coming soon.</p>
-            </TooltipContent>
-          </Tooltip>
-        )}
+        {isOnTopHeadlines &&
+          windowDimensions.width > 640 && (
+            <Tooltip>
+              <TooltipTrigger className="hover:cursor-pointer">
+                <InfoIcon size={16} className="block text-gray-500" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Search functionality is on this page is coming soon.</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
 
         <FormField
           control={form.control}
@@ -71,7 +74,11 @@ function Search() {
               <FormControl>
                 <Textarea
                   className="w-full sm:w-[300px] !min-h-[40px] !max-h-[40px] sm:!min-h-[35px] sm:!max-h-[35px] sm:max-w-[600px] resize-none"
-                  placeholder="Search for articles by keyword..."
+                  placeholder={
+                    isOnTopHeadlines
+                      ? "Search functionality is on this page is coming soon."
+                      : "Search for recent articles by keyword..."
+                  }
                   id="search-input"
                   {...field}
                 />

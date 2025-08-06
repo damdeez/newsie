@@ -8,6 +8,7 @@ import { Loader2 } from "lucide-react";
 import { useSearch } from "@/contexts/SearchContext";
 import { INewsApiArticle } from "@/types/types";
 import { getTimeOfDayGreeting } from "@/utils/helpers";
+import { usePathname } from "next/navigation";
 
 const apiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
 const openai = createOpenAI({
@@ -46,16 +47,23 @@ const Summary = ({ articles, loading }: SummaryProps) => {
   const [aiResponse, setAiResponse] = useState("");
   const [loadingSummary, setLoadingSummary] = useState(false);
   const { searchTerm, searchLoading } = useSearch();
+  const pathname = usePathname();
+  const isOnTopHeadlines = pathname === "/top-headlines";
 
   const handleGenerateSummary = async () => {
     setLoadingSummary(true);
     try {
       // TODO: decide if we want to use generateText or streamText
+      const prompt = isOnTopHeadlines
+        ? `Generate a summary for the following articles, be concise and easy to understand while having a friendly-tone towards the user who is reading your response: ${articles
+            ?.map((article) => article.description)
+            .join(", ")}`
+        : `Generate a summary for the following articles based on a search query ${searchTerm}, be concise and easy to understand while having a friendly-tone towards the user who is reading your response: ${articles
+            ?.map((article) => article.description)
+            .join(", ")}`;
       const { textStream: aiText } = streamText({
         model: openai("o3-mini"),
-        prompt: `Generate a summary for the following articles based on a search query ${searchTerm}, be concise and easy to understand while having a friendly-tone towards the user who is reading your response: ${articles
-          ?.map((article) => article.description)
-          .join(", ")}`,
+        prompt: prompt,
       });
       for await (const delta of aiText) {
         // TODO: probably need to handle this better for performance reasons
@@ -77,7 +85,11 @@ const Summary = ({ articles, loading }: SummaryProps) => {
     <section className="flex w-full flex-col p-4 max-h-96 md:h-min bg-gray-100 dark:bg-gray-800 rounded-b-none md:rounded-b-lg rounded-lg fixed bottom-0 left-0 right-0 sm:sticky sm:bottom-16 z-10 overflow-y-auto">
       <h2 className="text-md sm:text-lg font-semibold mb-4 sm:mb-2">
         {!aiResponse
-          ? `${getTimeOfDayGreeting()} 🤖 AI summary of articles on "${searchTerm}" will be generated here.`
+          ? `${getTimeOfDayGreeting()} 🤖 ${
+              isOnTopHeadlines
+                ? "AI summary of top headlines will be generated here."
+                : `AI summary of articles on "${searchTerm}" will be generated here.`
+            }`
           : `Enjoy your summary of recent news on "${searchTerm}".`}
       </h2>
       {!aiResponse && (

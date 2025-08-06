@@ -12,7 +12,7 @@ interface ArticlesProps {
 
 const Articles = ({ title, articles, loading }: ArticlesProps) => {
   const pathname = usePathname();
-  const isTopHeadlines = pathname === "/top-headlines";
+  const isOnTopHeadlines = pathname === "/top-headlines";
 
   if (loading) {
     return (
@@ -27,7 +27,7 @@ const Articles = ({ title, articles, loading }: ArticlesProps) => {
   return (
     <section className="w-full max-w-6xl mx-auto items-start">
       <h2 className="text-xl font-bold mb-4">
-        {isTopHeadlines
+        {isOnTopHeadlines
           ? "Top Headlines"
           : `Most recent articles for "${title}"`}
       </h2>
@@ -45,7 +45,8 @@ const Articles = ({ title, articles, loading }: ArticlesProps) => {
               </a>
             </div>
             <p className="text-sm text-gray-500 mb-1">
-              {article.source.name} | {new Date(article.publishedAt).toLocaleDateString()} by{" "}
+              {article.source.name} |{" "}
+              {new Date(article.publishedAt).toLocaleDateString()} by{" "}
               {article.author || "Unknown"}
             </p>
           </li>

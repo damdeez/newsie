@@ -68,7 +68,9 @@ describe("<Search />", () => {
     mockUsePathname.mockReturnValue("/");
     render(<Search />);
 
-    const input = screen.getByPlaceholderText("Search for articles by keyword...");
+    const input = screen.getByPlaceholderText(
+      "Search for recent articles by keyword..."
+    );
     expect(input).toBeInTheDocument();
   });
 
@@ -84,7 +86,7 @@ describe("<Search />", () => {
 
     render(<Search />);
 
-    const input = screen.getByPlaceholderText("Search for articles by keyword...");
+    const input = screen.getByPlaceholderText("Search for recent articles by keyword...");
     await user.type(input, "new search term");
 
     expect(input).toHaveValue("new search term");
