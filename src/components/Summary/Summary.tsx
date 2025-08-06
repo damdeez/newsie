@@ -69,7 +69,7 @@ const Summary = ({ articles, loading }: SummaryProps) => {
         // TODO: probably need to handle this better for performance reasons
         setAiResponse((prev) => prev + delta);
       }
-    } catch (error) {
+    } catch {
       setAiResponse("An error occurred while generating the summary.");
     } finally {
       setLoadingSummary(false);
