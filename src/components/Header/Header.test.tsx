@@ -91,7 +91,6 @@ describe("<Header />", () => {
 
     const logo = screen.getByAltText("Newsie logo");
     expect(logo).toBeInTheDocument();
-    expect(logo).toHaveAttribute("src", "/newsie.svg");
   });
 
   it("renders navigation links correctly", () => {

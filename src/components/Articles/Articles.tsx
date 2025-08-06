@@ -1,6 +1,5 @@
 import { INewsApiArticle } from "@/types/types";
 import { Loader2 } from "lucide-react";
-// import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 interface ArticlesProps {
@@ -42,25 +41,9 @@ const Articles = ({ title, articles, loading }: ArticlesProps) => {
               >
                 {article.title}
               </a>
-              {/* Article image preview */}
-              {/* {article.urlToImage && (
-                <div className="absolute right-[140px] top-[40px] invisible group-hover:visible bg-white border border-gray-300 rounded-lg shadow-lg p-1 z-10 w-64">
-                  <Image
-                    src={article.urlToImage}
-                    alt={article.title}
-                    width={250}
-                    height={100}
-                    className="rounded-md object-cover"
-                  />
-                  <p className="text-xs text-gray-600 mt-1">
-                    {article.description}
-                  </p>
-                </div>
-              )} */}
             </div>
-
             <p className="text-sm text-gray-500 mb-1">
-              {new Date(article.publishedAt).toLocaleDateString()} by{" "}
+              {article.source.name} | {new Date(article.publishedAt).toLocaleDateString()} by{" "}
               {article.author || "Unknown"}
             </p>
           </li>

@@ -20,7 +20,7 @@ const Header = () => {
       <div className="flex items-center justify-between w-full sm:w-auto">
         <Image
           className="dark:invert"
-          src="/newsie.svg"
+          src="/newsie.png"
           alt="Newsie logo"
           width={150}
           height={32}

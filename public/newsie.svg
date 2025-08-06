@@ -1,23 +1,9 @@
-<svg viewBox="0 0 400 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Triangle design element -->
-  <path d="M20.4 80L0 52.8V80H20.4Z" fill="currentColor"/>
-  <path d="M0 0V44.8L36.8 80H66.4L0 0Z" fill="currentColor"/>
-  
-  <!-- N -->
-  <path d="M40 0H52V56L80 0H92V80H80V24L52 80H40V0Z" fill="currentColor"/>
-  
-  <!-- E -->
-  <path d="M104 0H148V12H116V32H144V44H116V68H148V80H104V0Z" fill="currentColor"/>
-  
-  <!-- W -->  
-  <path d="M160 0H172L184 60L196 0H208L220 60L232 0H244L228 80H216L204 20L192 80H180L160 0Z" fill="currentColor"/>
-  
-  <!-- S -->
-  <path d="M256 0H296V12H268V32H296V44H268V68H296V80H256C256 72 256 68 256 68H284V56H256V24H284V12H256V0Z" fill="currentColor"/>
-  
-  <!-- I -->
-  <path d="M308 0H320V80H308V0Z" fill="currentColor"/>
-  
-  <!-- E -->
-  <path d="M332 0H376V12H344V32H372V44H344V68H376V80H332V0Z" fill="currentColor"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 100" width="420" height="100">
+  <!-- Left lightning-style N -->
+  <path d="M0,90 L0,0 L15,0 L15,65 L100,0 L85,0 L85,90 L70,90 L70,25 L0,90 Z" fill="#fff" />
+  <!-- Central letters EWSI -->
+  <text x="120" y="75" font-family="Impact, Arial Black, sans-serif" font-size="64" font-weight="bold" fill="#fff">EWSI</text>
+  <!-- Right lightning-style E -->
+  <path d="M340,0 L355,0 L355,60 L420,10 L405,10 L405,90 L390,90 L390,25 L320,90 L335,90 Z" fill="#fff" />
 </svg>
