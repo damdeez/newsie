@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { streamText } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";

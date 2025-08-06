@@ -22,6 +22,7 @@ export const SearchProvider = ({
 }: SearchProviderProps) => {
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
   const [searchLoading, setSearchLoading] = useState(false);
+  console.info("searchTerm", searchTerm);
 
   return (
     <SearchContext.Provider

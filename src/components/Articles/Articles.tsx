@@ -1,3 +1,5 @@
+"use client";
+
 import { INewsApiArticle } from "@/types/types";
 import { Loader2 } from "lucide-react";
 import { usePathname } from "next/navigation";
