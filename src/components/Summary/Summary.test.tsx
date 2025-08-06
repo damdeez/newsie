@@ -96,8 +96,6 @@ describe("<Summary />", () => {
         yield "This is a test summary about the news articles.";
       })(),
     });
-    
-    console.error = jest.fn();
   });
 
   it("renders the summary component with correct title", () => {
