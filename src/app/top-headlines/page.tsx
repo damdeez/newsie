@@ -16,7 +16,7 @@ export default function TopHeadlines() {
     return (
       <main className="font-sans grid items-start justify-items-center min-h-screen p-4 sm:p-8 pb-20 gap-4 sm:gap-16">
         <Header />
-        <div className="grid max-w-6xl w-full gap-4 relative">
+        <div className="grid max-w-6xl justify-center w-full gap-4 relative">
           <Loader2 className="animate-spin" />
         </div>
       </main>
