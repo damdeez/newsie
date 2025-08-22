@@ -14,6 +14,17 @@ export const uniqueArticles = (articles: INewsApiArticle[]) => {
   return uniqueArticles;
 };
 
+// export const uniqueArticles = (articles: INewsApiArticle[]) => {
+//   const seenTitles = new Set<string>();
+//   return articles.filter((article) => {
+//     if (seenTitles.has(article.title)) {
+//       return false;
+//     }
+//     seenTitles.add(article.title);
+//     return true;
+//   });
+// };
+
 export const getTimeOfDayGreeting = () => {
   const hour = new Date().getHours();
   if (hour < 12) {
