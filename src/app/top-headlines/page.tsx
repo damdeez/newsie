@@ -1,12 +1,13 @@
 "use client";
 
-import { AlertCircleIcon, Loader2, SquareArrowOutUpRight } from "lucide-react";
 import Articles from "@/components/Articles/Articles";
-import useGetTopHeadlines from "@/hooks/useGetTopHeadlines";
+import Footer from "@/components/Footer/Footer";
 import Header from "@/components/Header/Header";
-import { useSearch } from "@/contexts/SearchContext";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import Summary from "@/components/Summary/Summary";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useSearch } from "@/contexts/SearchContext";
+import useGetTopHeadlines from "@/hooks/useGetTopHeadlines";
+import { AlertCircleIcon, Loader2 } from "lucide-react";
 
 export default function TopHeadlines() {
   const { searchTerm } = useSearch();
@@ -14,18 +15,21 @@ export default function TopHeadlines() {
 
   if (loading) {
     return (
-      <main className="font-sans grid items-start justify-items-center min-h-screen p-4 sm:p-8 pb-20 gap-4 sm:gap-16">
+      <main className="font-sans grid min-h-screen grid-rows-[auto_1fr_auto] justify-items-center p-4 sm:p-8 gap-4 sm:gap-16">
         <Header />
-        <div className="grid max-w-6xl justify-center w-full gap-4 relative">
+        <div className="grid row-start-2 max-w-6xl justify-center w-full gap-4 relative">
           <Loader2 className="animate-spin" />
         </div>
+        <Footer emoji="👨‍💻" />
       </main>
     );
-  } else if (error) {
+  }
+
+  if (error) {
     return (
-      <main className="font-sans grid items-start justify-items-center p-4 sm:p-8 pb-20 gap-4 sm:gap-16">
+      <main className="font-sans grid min-h-screen grid-rows-[auto_1fr_auto] justify-items-center p-4 sm:p-8 gap-4 sm:gap-16">
         <Header />
-        <div className="grid max-w-6xl w-full gap-4 relative">
+        <div className="grid row-start-2 max-w-6xl w-full gap-4 relative">
           <Alert variant="destructive">
             <AlertCircleIcon />
             <AlertTitle>Error</AlertTitle>
@@ -34,14 +38,15 @@ export default function TopHeadlines() {
             </AlertDescription>
           </Alert>
         </div>
+        <Footer emoji="👨‍💻" />
       </main>
     );
   }
 
   return (
-    <main className="font-sans grid items-start justify-items-center min-h-screen p-4 sm:p-8 pb-20 gap-4 sm:gap-16">
+    <main className="font-sans grid min-h-screen grid-rows-[auto_1fr_auto] justify-items-center p-4 sm:p-8 gap-4 sm:gap-16">
       <Header />
-      <div className="grid max-w-6xl grid-cols-1 lg:grid-cols-[3fr_2fr] w-full gap-4 relative">
+      <div className="grid row-start-2 max-w-6xl grid-cols-1 lg:grid-cols-[3fr_2fr] w-full gap-4 relative">
         <Articles
           title={searchTerm}
           articles={data?.articles}
@@ -49,18 +54,7 @@ export default function TopHeadlines() {
         />
         <Summary articles={data?.articles} loading={loading} />
       </div>
-      {!loading && (
-        <footer className="row-start-3 flex gap-4 sm:gap-6 flex-wrap items-center justify-center px-4">
-          <a
-            className="flex items-center gap-2 hover:underline hover:underline-offset-4 text-sm"
-            href="https://www.damir.fun"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <SquareArrowOutUpRight size={15} /> Created by Damir 👨‍💻
-          </a>
-        </footer>
-      )}
+      <Footer emoji="👨‍💻" />
     </main>
   );
 }
