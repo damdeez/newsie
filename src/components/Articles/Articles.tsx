@@ -13,14 +13,15 @@ interface ArticlesProps {
 const Articles = ({ title, articles, loading }: ArticlesProps) => {
   const pathname = usePathname();
   const isOnTopHeadlines = pathname === "/top-headlines";
+  const isLoading = loading || typeof articles === "undefined";
 
-  if (loading) {
+  if (isLoading) {
     return (
       <p>
         <Loader2 className="animate-spin" />
       </p>
     );
-  } else if (!articles || (articles.length === 0 && !loading)) {
+  } else if (!articles || articles.length === 0) {
     return <p>No articles found.</p>;
   }
 

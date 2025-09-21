@@ -66,9 +66,9 @@ describe("<Articles />", () => {
     expect(screen.getByText("No articles found.")).toBeInTheDocument();
   });
 
-  it('renders "No articles found" when articles is undefined', () => {
+  it('shows loader when articles is undefined', () => {
     render(<Articles title="Test" loading={false} />);
-    expect(screen.getByText("No articles found.")).toBeInTheDocument();
+    expect(screen.getByTestId("loader")).toBeInTheDocument();
   });
 
   it("renders Top Headlines title correctly when on top-headlines page", () => {

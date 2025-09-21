@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 
 export const useGetTopHeadlines = (country: string, query?: string) => {
   const [data, setData] = useState<INewsApiResponse | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { setSearchLoading } = useSearch();
 
