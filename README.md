@@ -1,5 +1,7 @@
 # Newsie 📰 (just another News app) 🤘
 
+[Check out a demo](https://newsie-puce.vercel.app/)
+
 Uses the NewsData.io API (https://newsdata.io) to bring you the latest News from around the world. It also uses the `ai` SDK to generate a summary of the news using an OpenAI LLM.
 
 ## Getting Started 🚀
