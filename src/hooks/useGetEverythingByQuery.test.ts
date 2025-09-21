@@ -1,6 +1,7 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { useGetEverythingByQuery } from "./useGetEverythingByQuery";
 import { INewsApiResponse, INewsApiArticle } from "../types/types";
+import { API_URL } from "@/utils/constants";
 
 // Mock the SearchContext
 const mockSetSearchLoading = jest.fn();
@@ -15,7 +16,7 @@ const originalEnv = process.env;
 beforeAll(() => {
   process.env = {
     ...originalEnv,
-    NEXT_PUBLIC_NEWS_API_KEY: "test-api-key",
+    NEXT_PUBLIC_NEWSDATA_API_KEY: "test-api-key",
   };
 });
 
@@ -23,34 +24,40 @@ afterAll(() => {
   process.env = originalEnv;
 });
 
-// Mock the oneMonthAgo function since it's used in the hook
+// Import actual helpers since we're now importing uniqueArticles directly
 jest.mock("../utils/helpers", () => {
   const actual = jest.requireActual("../utils/helpers");
   return {
     ...actual,
-    oneMonthAgo: jest.fn(() => "2023-01-01"),
   };
 });
 
-jest.mock("../utils/constants", () => ({
-  API_URL: "https://newsapi.org/v2",
-}));
-
 const mockArticles: INewsApiArticle[] = [
   {
-    source: { id: "test", name: "Test Source" },
+    source_id: "test",
+    source_name: "Test Source",
     author: "John Doe",
     title: "Test Article",
     description: "Test description",
-    url: "https://example.com/article1",
-    urlToImage: "https://example.com/image1.jpg",
-    publishedAt: "2023-01-01T12:00:00Z",
+    link: "https://example.com/article1",
+    image_url: "https://example.com/image1.jpg",
+    pubDate: "2023-01-01T12:00:00Z",
     content: "Test content",
+    category: ["general"],
+    country: ["us"],
+    language: "en",
+    keywords: ["test", "article"],
   },
 ];
 
+const mockNewsDataResponse = {
+  status: "success",
+  totalResults: 1,
+  results: mockArticles,
+};
+
 const mockSuccessResponse: INewsApiResponse = {
-  status: "ok",
+  status: "success",
   totalResults: 1,
   articles: mockArticles,
 };
@@ -66,7 +73,7 @@ describe("useGetEverythingByQuery", () => {
   it("should return initial state", () => {
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: async () => mockSuccessResponse,
+      json: async () => mockNewsDataResponse,
     });
 
     const { result } = renderHook(() => useGetEverythingByQuery("test"));
@@ -88,7 +95,7 @@ describe("useGetEverythingByQuery", () => {
   it("should fetch data successfully", async () => {
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: async () => mockSuccessResponse,
+      json: async () => mockNewsDataResponse,
     });
 
     const { result } = renderHook(() => useGetEverythingByQuery("bitcoin"));
@@ -104,15 +111,12 @@ describe("useGetEverythingByQuery", () => {
     expect(result.current.error).toBeNull();
     expect(mockSetSearchLoading).toHaveBeenCalledWith(false);
 
-    // Verify correct API call
-    expect(fetch).toHaveBeenCalledWith(
-      "https://newsapi.org/v2/everything?language=en&from=2023-01-01&sortBy=publishedAt&q=bitcoin",
-      {
-        headers: {
-          "X-Api-Key": "test-api-key",
-        },
-      }
-    );
+    // Verify correct API call (order-insensitive)
+    const [url1, opts1] = (fetch as jest.Mock).mock.calls[0];
+    expect(url1).toContain(`${API_URL}/news?`);
+    expect(url1).toContain("language=en");
+    expect(url1).toContain("q=bitcoin");
+    expect(opts1).toEqual({ signal: expect.any(AbortSignal) });
   });
 
   it("should handle fetch network errors", async () => {
@@ -144,8 +148,8 @@ describe("useGetEverythingByQuery", () => {
     });
 
     expect(result.current.error).toBe("An error occurred, please try refreshing the page.");
-    // Note: The hook still sets data even when there's an HTTP error
-    expect(result.current.data).toEqual({ ...errorResponse, articles: [] });
+    // When there's an HTTP error, data should be null
+    expect(result.current.data).toBeNull();
   });
 
   it("should handle API error responses", async () => {
@@ -169,8 +173,8 @@ describe("useGetEverythingByQuery", () => {
     });
 
     expect(result.current.error).toBe("Your API key is missing.");
-    // Note: The hook still sets data even when there's an API error
-    expect(result.current.data).toEqual({ ...errorResponse, articles: [] });
+    // When there's an API error, data should be null
+    expect(result.current.data).toBeNull();
   });
 
   it("should handle API error responses without error message", async () => {
@@ -193,14 +197,14 @@ describe("useGetEverythingByQuery", () => {
     });
 
     expect(result.current.error).toBe("An error occurred");
-    // Note: The hook still sets data even when there's an API error
-    expect(result.current.data).toEqual({ ...errorResponse, articles: [] });
+    // When there's an API error, data should be null
+    expect(result.current.data).toBeNull();
   });
 
   it("should refetch when query changes", async () => {
     (fetch as jest.Mock).mockResolvedValue({
       ok: true,
-      json: async () => mockSuccessResponse,
+      json: async () => mockNewsDataResponse,
     });
 
     const { result, rerender } = renderHook(
@@ -226,14 +230,12 @@ describe("useGetEverythingByQuery", () => {
     });
 
     expect(fetch).toHaveBeenCalledTimes(2);
-    expect(fetch).toHaveBeenLastCalledWith(
-      "https://newsapi.org/v2/everything?language=en&from=2023-01-01&sortBy=publishedAt&q=ethereum",
-      {
-        headers: {
-          "X-Api-Key": "test-api-key",
-        },
-      }
-    );
+    const lastCall = (fetch as jest.Mock).mock.calls[(fetch as jest.Mock).mock.calls.length - 1];
+    const [url2, opts2] = lastCall;
+    expect(url2).toContain(`${API_URL}/news?`);
+    expect(url2).toContain("language=en");
+    expect(url2).toContain("q=ethereum");
+    expect(opts2).toEqual({ signal: expect.any(AbortSignal) });
   });
 
   it("should handle non-Error exceptions", async () => {
@@ -251,11 +253,11 @@ describe("useGetEverythingByQuery", () => {
 
   it("should filter duplicate articles from the response", async () => {
     const responseWithDuplicates = {
-      status: "ok" as const,
+      status: "success" as const,
       totalResults: 2,
-      articles: [
+      results: [
         mockArticles[0],
-        { ...mockArticles[0], url: "different-url" }, // Same title, different URL
+        { ...mockArticles[0], link: "different-url" }, // Same title, different URL
       ],
     };
 

@@ -36,7 +36,7 @@ const Articles = ({ title, articles, loading }: ArticlesProps) => {
           <li key={index} className="mb-4">
             <div className="relative group inline">
               <a
-                href={article.url}
+                href={article.link}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:underline block w-[300px] sm:w-[600px] text-wrap"
@@ -45,8 +45,8 @@ const Articles = ({ title, articles, loading }: ArticlesProps) => {
               </a>
             </div>
             <p className="text-sm text-gray-500 mb-1">
-              {article.source.name} |{" "}
-              {new Date(article.publishedAt).toLocaleDateString()} by{" "}
+              {article.source_name} |{" "}
+              {new Date(article.pubDate).toLocaleDateString()} by{" "}
               {article.author || "Unknown"}
             </p>
           </li>

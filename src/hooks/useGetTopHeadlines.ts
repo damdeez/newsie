@@ -15,26 +15,46 @@ export const useGetTopHeadlines = (country: string, query?: string) => {
   useEffect(() => {
     setLoading(true);
     setSearchLoading(true);
+    setError(null);
+    const abortController = new AbortController();
+    
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          `${API_URL}/top-headlines?country=${country}${query ? `&q=${query}` : ""}`,
+        const apikey = process.env.NEXT_PUBLIC_NEWSDATA_API_KEY || "";
+        const params = new URLSearchParams({
+          country: country,
+          language: "en",
+          apikey: apikey,
+          ...(query && { q: query }),
+        });
+
+        const response = await fetch(`${API_URL}/news?${params.toString()}`,
           {
-            headers: {
-              "X-Api-Key": process.env.NEXT_PUBLIC_NEWS_API_KEY || "",
-            },
+            signal: abortController.signal,
           }
         );
+        const result = await response.json();
         if (!response.ok) {
           setError("An error occurred, please try refreshing the page.");
+          return;
         }
-        const result = await response.json();
-        if (result.status !== "ok") {
-          setError(result.error || "An error occurred");
+        if (result.status !== "success") {
+          setError(result.message || result.error || "An error occurred");
+          return;
         }
-        const uniqArticles = uniqueArticles(result.articles);
-        setData({ ...result, articles: uniqArticles });
+        const uniqArticles = uniqueArticles(result.results || []);
+        // Map API response to our shape without including raw results
+        setData({
+          status: result.status,
+          totalResults: result.totalResults,
+          nextPage: result.nextPage,
+          articles: uniqArticles,
+        });
       } catch (err) {
+        if (err instanceof Error && err.name === 'AbortError') {
+          // Request was cancelled, don't update state
+          return;
+        }
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
         setLoading(false);
@@ -43,6 +63,10 @@ export const useGetTopHeadlines = (country: string, query?: string) => {
     };
 
     fetchData();
+    
+    return () => {
+      abortController.abort();
+    };
   }, [country, query, setSearchLoading]);
 
   return { data, loading, error };

@@ -2,7 +2,7 @@
 
 import { INewsApiResponse } from "@/types/types";
 import { useState, useEffect } from "react";
-import { oneMonthAgo, uniqueArticles } from "@/utils/helpers";
+import { uniqueArticles } from "@/utils/helpers";
 import { API_URL } from "@/utils/constants";
 import { useSearch } from "@/contexts/SearchContext";
 
@@ -15,30 +15,46 @@ export const useGetEverythingByQuery = (query: string) => {
   useEffect(() => {
     setLoading(true);
     setSearchLoading(true);
+    setError(null);
+    const abortController = new AbortController();
+
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          `${API_URL}/everything?language=en&from=${oneMonthAgo()}&sortBy=publishedAt${
-            query ? `&q=${query}` : ""
-          }`,
+        const apikey = process.env.NEXT_PUBLIC_NEWSDATA_API_KEY || "";
+        const params = new URLSearchParams({
+          language: "en",
+          apikey: apikey,
+          ...(query && { q: query })
+        });
+
+        const response = await fetch(`${API_URL}/news?${params.toString()}`,
           {
-            headers: {
-              "X-Api-Key": process.env.NEXT_PUBLIC_NEWS_API_KEY || "",
-            },
+            signal: abortController.signal,
           }
         );
+        const result = await response.json();
         if (!response.ok) {
           setError("An error occurred, please try refreshing the page.");
+          return;
         }
-        const result = await response.json();
-        if (result.status !== "ok") {
-          setError(result.error || "An error occurred");
+        if (result.status !== "success") {
+          setError(result.message || result.error || "An error occurred");
+          return;
         }
 
         // Check for same title articles and then filter them out
-        const uniqArticles = uniqueArticles(result.articles);
-        setData({ ...result, articles: uniqArticles });
+        const uniqArticles = uniqueArticles(result.results || []);
+        setData({
+          status: result.status,
+          totalResults: result.totalResults,
+          nextPage: result.nextPage,
+          articles: uniqArticles,
+        });
       } catch (err) {
+        if (err instanceof Error && err.name === 'AbortError') {
+          // Request was cancelled, don't update state
+          return;
+        }
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
         setLoading(false);
@@ -49,7 +65,10 @@ export const useGetEverythingByQuery = (query: string) => {
     if (query) {
       fetchData();
     }
-    
+
+    return () => {
+      abortController.abort();
+    };
   }, [query, setSearchLoading]);
 
   return { data, loading, error };

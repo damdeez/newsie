@@ -1,6 +1,7 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { useGetTopHeadlines } from "./useGetTopHeadlines";
 import { INewsApiResponse, INewsApiArticle } from "../types/types";
+import { API_URL } from "@/utils/constants";
 
 // Mock the SearchContext
 const mockSetSearchLoading = jest.fn();
@@ -15,7 +16,7 @@ const originalEnv = process.env;
 beforeAll(() => {
   process.env = {
     ...originalEnv,
-    NEXT_PUBLIC_NEWS_API_KEY: "test-api-key",
+    NEXT_PUBLIC_NEWSDATA_API_KEY: "test-api-key",
   };
 });
 
@@ -32,24 +33,35 @@ jest.mock("../utils/helpers", () => {
 });
 
 jest.mock("../utils/constants", () => ({
-  API_URL: "https://newsapi.org/v2",
+  API_URL: "https://newsdata.io/api/1",
 }));
 
 const mockArticles: INewsApiArticle[] = [
   {
-    source: { id: "test", name: "Test Source" },
+    source_id: "test",
+    source_name: "Test Source",
     author: "Jane Doe",
     title: "Breaking News",
     description: "Important news description",
-    url: "https://example.com/breaking-news",
-    urlToImage: "https://example.com/breaking.jpg",
-    publishedAt: "2023-01-01T12:00:00Z",
+    link: "https://example.com/breaking-news",
+    image_url: "https://example.com/breaking.jpg",
+    pubDate: "2023-01-01T12:00:00Z",
     content: "Breaking news content",
+    category: ["general"],
+    country: ["us"],
+    language: "en",
+    keywords: ["breaking", "news"],
   },
 ];
 
+const mockNewsDataResponse = {
+  status: "success",
+  totalResults: 1,
+  results: mockArticles,
+};
+
 const mockSuccessResponse: INewsApiResponse = {
-  status: "ok",
+  status: "success",
   totalResults: 1,
   articles: mockArticles,
 };
@@ -65,7 +77,7 @@ describe("useGetTopHeadlines", () => {
   it("should return initial state", () => {
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: async () => mockSuccessResponse,
+      json: async () => mockNewsDataResponse,
     });
 
     const { result } = renderHook(() => useGetTopHeadlines("us"));
@@ -78,7 +90,7 @@ describe("useGetTopHeadlines", () => {
   it("should fetch top headlines successfully without query", async () => {
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: async () => mockSuccessResponse,
+      json: async () => mockNewsDataResponse,
     });
 
     const { result } = renderHook(() => useGetTopHeadlines("us"));
@@ -94,21 +106,18 @@ describe("useGetTopHeadlines", () => {
     expect(result.current.error).toBeNull();
     expect(mockSetSearchLoading).toHaveBeenCalledWith(false);
 
-    // Verify correct API call without query
-    expect(fetch).toHaveBeenCalledWith(
-      "https://newsapi.org/v2/top-headlines?country=us",
-      {
-        headers: {
-          "X-Api-Key": "test-api-key",
-        },
-      }
-    );
+    // Verify correct API call without query (order-insensitive)
+    const [url1, opts1] = (fetch as jest.Mock).mock.calls[0];
+    expect(url1).toContain(`${API_URL}/news?`);
+    expect(url1).toContain("country=us");
+    expect(url1).toContain("language=en");
+    expect(opts1).toEqual({ signal: expect.any(AbortSignal) });
   });
 
   it("should fetch top headlines successfully with query", async () => {
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: async () => mockSuccessResponse,
+      json: async () => mockNewsDataResponse,
     });
 
     const { result } = renderHook(() => useGetTopHeadlines("us", "bitcoin"));
@@ -120,25 +129,23 @@ describe("useGetTopHeadlines", () => {
     expect(result.current.data).toEqual(mockSuccessResponse);
     expect(result.current.error).toBeNull();
 
-    // Verify correct API call with query
-    expect(fetch).toHaveBeenCalledWith(
-      "https://newsapi.org/v2/top-headlines?country=us&q=bitcoin",
-      {
-        headers: {
-          "X-Api-Key": "test-api-key",
-        },
-      }
-    );
+    // Verify correct API call with query (order-insensitive)
+    const [url2, opts2] = (fetch as jest.Mock).mock.calls[0];
+    expect(url2).toContain(`${API_URL}/news?`);
+    expect(url2).toContain("country=us");
+    expect(url2).toContain("language=en");
+    expect(url2).toContain("q=bitcoin");
+    expect(opts2).toEqual({ signal: expect.any(AbortSignal) });
   });
 
   it("should handle missing API key", async () => {
     // Temporarily remove API key
-    const originalKey = process.env.NEXT_PUBLIC_NEWS_API_KEY;
-    delete process.env.NEXT_PUBLIC_NEWS_API_KEY;
+    const originalKey = process.env.NEXT_PUBLIC_NEWSDATA_API_KEY;
+    delete process.env.NEXT_PUBLIC_NEWSDATA_API_KEY;
 
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: async () => mockSuccessResponse,
+      json: async () => mockNewsDataResponse,
     });
 
     const { result } = renderHook(() => useGetTopHeadlines("us"));
@@ -147,18 +154,15 @@ describe("useGetTopHeadlines", () => {
       expect(result.current.loading).toBe(false);
     });
 
-    // Verify API call was made with empty string for missing key
-    expect(fetch).toHaveBeenCalledWith(
-      "https://newsapi.org/v2/top-headlines?country=us",
-      {
-        headers: {
-          "X-Api-Key": "",
-        },
-      }
-    );
+    // Verify API call was made with required params
+    const [url3, opts3] = (fetch as jest.Mock).mock.calls[0];
+    expect(url3).toContain(`${API_URL}/news?`);
+    expect(url3).toContain("country=us");
+    expect(url3).toContain("language=en");
+    expect(opts3).toEqual({ signal: expect.any(AbortSignal) });
 
     // Restore API key
-    process.env.NEXT_PUBLIC_NEWS_API_KEY = originalKey;
+    process.env.NEXT_PUBLIC_NEWSDATA_API_KEY = originalKey;
   });
 
   it("should handle fetch network errors", async () => {
@@ -190,8 +194,8 @@ describe("useGetTopHeadlines", () => {
     });
 
     expect(result.current.error).toBe("An error occurred, please try refreshing the page.");
-    // Note: The hook still sets data even when there's an HTTP error
-    expect(result.current.data).toEqual({ ...errorResponse, articles: [] });
+    // When there's an HTTP error, data should be null
+    expect(result.current.data).toBeNull();
   });
 
   it("should handle API error responses", async () => {
@@ -215,8 +219,8 @@ describe("useGetTopHeadlines", () => {
     });
 
     expect(result.current.error).toBe("Your API key is invalid.");
-    // Note: The hook still sets data even when there's an API error
-    expect(result.current.data).toEqual({ ...errorResponse, articles: [] });
+    // When there's an API error, data should be null
+    expect(result.current.data).toBeNull();
   });
 
   it("should handle API error responses without error message", async () => {
@@ -239,14 +243,14 @@ describe("useGetTopHeadlines", () => {
     });
 
     expect(result.current.error).toBe("An error occurred");
-    // Note: The hook still sets data even when there's an API error
-    expect(result.current.data).toEqual({ ...errorResponse, articles: [] });
+    // When there's an API error, data should be null
+    expect(result.current.data).toBeNull();
   });
 
   it("should refetch when country changes", async () => {
     (fetch as jest.Mock).mockResolvedValue({
       ok: true,
-      json: async () => mockSuccessResponse,
+      json: async () => mockNewsDataResponse,
     });
 
     const { result, rerender } = renderHook(
@@ -272,20 +276,18 @@ describe("useGetTopHeadlines", () => {
     });
 
     expect(fetch).toHaveBeenCalledTimes(2);
-    expect(fetch).toHaveBeenLastCalledWith(
-      "https://newsapi.org/v2/top-headlines?country=gb",
-      {
-        headers: {
-          "X-Api-Key": "test-api-key",
-        },
-      }
-    );
+    const lastCall1 = (fetch as jest.Mock).mock.calls[(fetch as jest.Mock).mock.calls.length - 1];
+    const [url4, opts4] = lastCall1;
+    expect(url4).toContain(`${API_URL}/news?`);
+    expect(url4).toContain("country=gb");
+    expect(url4).toContain("language=en");
+    expect(opts4).toEqual({ signal: expect.any(AbortSignal) });
   });
 
   it("should refetch when query changes", async () => {
     (fetch as jest.Mock).mockResolvedValue({
       ok: true,
-      json: async () => mockSuccessResponse,
+      json: async () => mockNewsDataResponse,
     });
 
     const { result, rerender } = renderHook(
@@ -311,14 +313,13 @@ describe("useGetTopHeadlines", () => {
     });
 
     expect(fetch).toHaveBeenCalledTimes(2);
-    expect(fetch).toHaveBeenLastCalledWith(
-      "https://newsapi.org/v2/top-headlines?country=us&q=technology",
-      {
-        headers: {
-          "X-Api-Key": "test-api-key",
-        },
-      }
-    );
+    const lastCall2 = (fetch as jest.Mock).mock.calls[(fetch as jest.Mock).mock.calls.length - 1];
+    const [url5, opts5] = lastCall2;
+    expect(url5).toContain(`${API_URL}/news?`);
+    expect(url5).toContain("country=us");
+    expect(url5).toContain("language=en");
+    expect(url5).toContain("q=technology");
+    expect(opts5).toEqual({ signal: expect.any(AbortSignal) });
   });
 
   it("should handle non-Error exceptions", async () => {
@@ -336,11 +337,11 @@ describe("useGetTopHeadlines", () => {
 
   it("should filter duplicate articles from the response", async () => {
     const responseWithDuplicates = {
-      status: "ok" as const,
+      status: "success" as const,
       totalResults: 2,
-      articles: [
+      results: [
         mockArticles[0],
-        { ...mockArticles[0], url: "different-url" }, // Same title, different URL
+        { ...mockArticles[0], link: "different-url" }, // Same title, different URL
       ],
     };
 
@@ -363,7 +364,7 @@ describe("useGetTopHeadlines", () => {
   it("should handle empty query string", async () => {
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: async () => mockSuccessResponse,
+      json: async () => mockNewsDataResponse,
     });
 
     const { result } = renderHook(() => useGetTopHeadlines("us", ""));
@@ -373,13 +374,11 @@ describe("useGetTopHeadlines", () => {
     });
 
     // Empty query string is falsy, so it should NOT include the query parameter
-    expect(fetch).toHaveBeenCalledWith(
-      "https://newsapi.org/v2/top-headlines?country=us",
-      {
-        headers: {
-          "X-Api-Key": "test-api-key",
-        },
-      }
-    );
+    const [url6, opts6] = (fetch as jest.Mock).mock.calls[0];
+    expect(url6).toContain(`${API_URL}/news?`);
+    expect(url6).toContain("country=us");
+    expect(url6).toContain("language=en");
+    expect(url6).not.toContain("q=");
+    expect(opts6).toEqual({ signal: expect.any(AbortSignal) });
   });
 });

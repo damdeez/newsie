@@ -1,5 +1,5 @@
 /**
- * The 2-letter ISO 3166-1 code of the country
+ * The 2-letter ISO 3166-1 code of the country (NewsData.io supported countries)
  */
 export type ApiNewsCountry =
   | "ae"
@@ -140,13 +140,13 @@ export interface INewsApiTopHeadlinesParams {
 }
 
 /**
- * Response object for 'getTopHeadlines' and 'getEverything' endpoints.
+ * Response object for NewsData.io API endpoints.
  */
 export interface INewsApiResponse {
   /**
-   * If the request was successful or not. Options: ok, error. In the case of error a code and message property will be populated.
+   * If the request was successful or not. Options: success, error.
    */
-  status: ApiNewsResponseStatus;
+  status: "success" | "error";
 
   /**
    * Error code
@@ -156,7 +156,7 @@ export interface INewsApiResponse {
   /**
    * Error message
    */
-  error?: string;
+  message?: string;
 
   /**
    * The total number of results available for your request.
@@ -167,16 +167,22 @@ export interface INewsApiResponse {
    * The results of the request.
    */
   articles: Array<INewsApiArticle>;
+
+  /**
+   * Next page token for pagination
+   */
+  nextPage?: string;
 }
 
 /**
- * The results of the request.
+ * The results of the request (NewsData.io article structure).
  */
 export interface INewsApiArticle {
   /**
    * The identifier id and a display name.
    */
-  source: INewsApiSource;
+  source_id: string | null;
+  source_name: string;
 
   /**
    * The author of the article.
@@ -196,22 +202,42 @@ export interface INewsApiArticle {
   /**
    * The direct URL to the article.
    */
-  url: string;
+  link: string;
 
   /**
    * The URL to a relevant image for the article.
    */
-  urlToImage: string | null;
+  image_url: string | null;
 
   /**
    * The date and time that the article was published, in UTC (+000)
    */
-  publishedAt: string;
+  pubDate: string;
 
   /**
-   * The unformatted content of the article, where available. This is truncated to 200 chars.
+   * The unformatted content of the article, where available.
    */
   content: string | null;
+
+  /**
+   * Categories of the article
+   */
+  category: string[];
+
+  /**
+   * Country of the article
+   */
+  country: string[];
+
+  /**
+   * Language of the article
+   */
+  language: string;
+
+  /**
+   * Keywords related to the article
+   */
+  keywords: string[] | null;
 }
 
 /**

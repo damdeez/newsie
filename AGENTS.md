@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to all code LLMs when working with code in this repository.
 
 ## AI Guidance
 
@@ -15,7 +15,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 * For React Hooks, stick to the same pattern as the current hooks located in `/src/hooks`.
 * For React components make sure to follow the functional React pattern and include a return clause at the top of the component function, example component is `<Articles>`.
 * Make sure all of your changes are clean of Eslint and TypeScript errors.
-* Use `pnpm` over any other package manager.
+* Use `bun` over any other package manager.
 * Use TailwindCSS for styling and make sure the version you are referencing is compatible with the version in package.json.
 * Don't write tests for any files located in `/src/components/ui`.
 * Don't write tests to check for styling in components and make sure to check tests for TS errors.
@@ -24,4 +24,4 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-We are building a News site using the News API (https://newsapi.org/) along with `ai` SDK and OpenAI.
+We are building a News site using the News API (https://newsdata.io/) along with `ai` SDK and OpenAI.

@@ -25,24 +25,34 @@ jest.mock("lucide-react", () => ({
 
 const mockArticles: INewsApiArticle[] = [
   {
-    source: { id: "test", name: "Test Source" },
+    source_id: "test",
+    source_name: "Test Source",
     author: "John Doe",
     title: "Test Article Title",
     description: "Test article description",
-    url: "https://example.com/article1",
-    urlToImage: "https://example.com/image1.jpg",
-    publishedAt: "2023-01-01T12:00:00Z",
+    link: "https://example.com/article1",
+    image_url: "https://example.com/image1.jpg",
+    pubDate: "2023-01-01T12:00:00Z",
     content: "Test content",
+    category: ["general"],
+    country: ["us"],
+    language: "en",
+    keywords: ["test", "article"],
   },
   {
-    source: { id: "test2", name: "Test Source 2" },
+    source_id: "test2",
+    source_name: "Test Source 2",
     author: null,
     title: "Another Test Article",
     description: "Another test description",
-    url: "https://example.com/article2",
-    urlToImage: null,
-    publishedAt: "2023-01-02T15:30:00Z",
+    link: "https://example.com/article2",
+    image_url: null,
+    pubDate: "2023-01-02T15:30:00Z",
     content: "Another test content",
+    category: ["general"],
+    country: ["us"],
+    language: "en",
+    keywords: ["test", "article"],
   },
 ];
 
@@ -83,7 +93,7 @@ describe("<Articles />", () => {
     expect(screen.getByText("Another Test Article")).toBeInTheDocument();
 
     // Check links have correct href
-    const firstLink = screen.getByRole("link", { name: "Test Article Title" });
+    const firstLink = screen.getByText("Test Article Title").closest("a");
     expect(firstLink).toHaveAttribute("href", "https://example.com/article1");
     expect(firstLink).toHaveAttribute("target", "_blank");
     expect(firstLink).toHaveAttribute("rel", "noopener noreferrer");

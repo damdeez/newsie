@@ -10,7 +10,14 @@ jest.mock("ai", () => ({
   streamText: jest.fn(),
 }));
 
-const mockStreamText = streamText as jest.MockedFunction<typeof streamText>;
+type StreamTextMockResult = {
+  textStream: AsyncGenerator<string, void, unknown>;
+};
+
+const mockStreamText = streamText as unknown as jest.Mock<
+  Promise<StreamTextMockResult>,
+  Parameters<typeof streamText>
+>;
 
 // Mock @ai-sdk/openai
 jest.mock("@ai-sdk/openai", () => ({
@@ -61,24 +68,34 @@ jest.mock("../../utils/helpers", () => ({
 
 const mockArticles: INewsApiArticle[] = [
   {
-    source: { id: "test", name: "Test Source" },
+    source_id: "test",
+    source_name: "Test Source",
     author: "John Doe",
     title: "Test Article Title",
     description: "Test article description about bitcoin",
-    url: "https://example.com/article1",
-    urlToImage: "https://example.com/image1.jpg",
-    publishedAt: "2023-01-01T12:00:00Z",
+    link: "https://example.com/article1",
+    image_url: "https://example.com/image1.jpg",
+    pubDate: "2023-01-01T12:00:00Z",
     content: "Test content",
+    category: ["technology"],
+    country: ["us"],
+    language: "en",
+    keywords: ["bitcoin"],
   },
   {
-    source: { id: "test2", name: "Test Source 2" },
+    source_id: "test2",
+    source_name: "Test Source 2",
     author: "Jane Smith",
     title: "Another Test Article",
     description: "Another test description about bitcoin trends",
-    url: "https://example.com/article2",
-    urlToImage: null,
-    publishedAt: "2023-01-02T15:30:00Z",
+    link: "https://example.com/article2",
+    image_url: null,
+    pubDate: "2023-01-02T15:30:00Z",
     content: "Another test content",
+    category: ["technology"],
+    country: ["us"],
+    language: "en",
+    keywords: ["ai"],
   },
 ];
 
@@ -91,11 +108,13 @@ describe("<Summary />", () => {
       setSearchLoading: mockSetSearchLoading,
     });
     
-    mockStreamText.mockResolvedValue({
+    const mockResult: StreamTextMockResult = {
       textStream: (async function* () {
         yield "This is a test summary about the news articles.";
       })(),
-    });
+    };
+
+    mockStreamText.mockResolvedValue(mockResult);
   });
 
   it("renders the summary component with correct title", () => {

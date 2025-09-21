@@ -4,36 +4,51 @@ import { INewsApiArticle } from "../types/types";
 describe("helpers", () => {
   describe("uniqueArticles", () => {
     const mockArticle1: INewsApiArticle = {
-      source: { id: "source1", name: "Source 1" },
+      source_id: "source1",
+      source_name: "Source 1",
       author: "Author 1",
       title: "Unique Article 1",
       description: "Description 1",
-      url: "https://example.com/article1",
-      urlToImage: "https://example.com/image1.jpg",
-      publishedAt: "2023-01-01T12:00:00Z",
+      link: "https://example.com/article1",
+      image_url: "https://example.com/image1.jpg",
+      pubDate: "2023-01-01T12:00:00Z",
       content: "Content 1",
+      category: ["technology"],
+      country: ["us"],
+      language: "en",
+      keywords: ["crypto"],
     };
 
     const mockArticle2: INewsApiArticle = {
-      source: { id: "source2", name: "Source 2" },
+      source_id: "source2",
+      source_name: "Source 2",
       author: "Author 2",
       title: "Unique Article 2",
       description: "Description 2",
-      url: "https://example.com/article2",
-      urlToImage: "https://example.com/image2.jpg",
-      publishedAt: "2023-01-02T12:00:00Z",
+      link: "https://example.com/article2",
+      image_url: "https://example.com/image2.jpg",
+      pubDate: "2023-01-02T12:00:00Z",
       content: "Content 2",
+      category: ["technology"],
+      country: ["us"],
+      language: "en",
+      keywords: ["ai"],
     };
 
     const mockArticle3Duplicate: INewsApiArticle = {
-      source: { id: "source3", name: "Source 3" },
+      source_id: "source3",
+      source_name: "Source 3",
       author: "Author 3",
       title: "Unique Article 1", // Same title as mockArticle1
       description: "Description 3",
-      url: "https://example.com/article3",
-      urlToImage: "https://example.com/image3.jpg",
-      publishedAt: "2023-01-03T12:00:00Z",
+      link: "https://example.com/article3",
+      image_url: "https://example.com/image3.jpg",
+      pubDate: "2023-01-03T12:00:00Z",
       content: "Content 3",
+      category: ["technology"],
+      country: ["us"],
+      language: "en",
+      keywords: ["crypto"],
     };
 
     it("should return empty array when given empty array", () => {
@@ -59,7 +74,7 @@ describe("helpers", () => {
     });
 
     it("should handle multiple duplicates of the same title", () => {
-      const duplicateArticle = { ...mockArticle1, url: "different-url" };
+      const duplicateArticle = { ...mockArticle1, link: "different-url" };
       const anotherDuplicate = { ...mockArticle1, author: "Different Author" };
       
       const articles = [mockArticle1, duplicateArticle, mockArticle2, anotherDuplicate];
@@ -72,14 +87,19 @@ describe("helpers", () => {
 
     it("should handle articles with null/undefined values", () => {
       const articleWithNullAuthor: INewsApiArticle = {
-        source: { id: "source4", name: "Source 4" },
+        source_id: "source4",
+        source_name: "Source 4",
         author: null,
         title: "Article with null author",
         description: null,
-        url: "https://example.com/article4",
-        urlToImage: null,
-        publishedAt: "2023-01-04T12:00:00Z",
+        link: "https://example.com/article4",
+        image_url: null,
+        pubDate: "2023-01-04T12:00:00Z",
         content: null,
+        category: ["general"],
+        country: ["gb"],
+        language: "en",
+        keywords: null,
       };
 
       const articles = [mockArticle1, articleWithNullAuthor];
