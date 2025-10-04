@@ -1,4 +1,4 @@
-# CLAUDE.md
+# AGENTS.md
 
 This file provides guidance to all code LLMs when working with code in this repository.
 
@@ -11,7 +11,7 @@ This file provides guidance to all code LLMs when working with code in this repo
 * NEVER create files unless they're absolutely necessary for achieving your goal.
 * ALWAYS prefer editing an existing file to creating a new one.
 * NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
-* When asked to commit changes, exclude CLAUDE.md from any commits. Never delete this file.
+* When asked to commit changes, exclude AGENTS.md from any commits. Never delete this file.
 * For React Hooks, stick to the same pattern as the current hooks located in `/src/hooks`.
 * For React components make sure to follow the functional React pattern and include a return clause at the top of the component function, example component is `<Articles>`.
 * Make sure all of your changes are clean of Eslint and TypeScript errors.
